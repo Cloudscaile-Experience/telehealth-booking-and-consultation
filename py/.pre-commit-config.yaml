@@ -1,0 +1,85 @@
+# Pre-commit hooks for code quality — Python telehealth backend
+# See https://pre-commit.com for more information
+
+default_language_version:
+  python: python3.12
+
+repos:
+  # ── Standard hooks ──────────────────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=1000"]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: detect-private-key
+
+  # ── Black — Python formatter ─────────────────────────────────────────────────
+  - repo: https://github.com/psf/black
+    rev: 25.1.0
+    hooks:
+      - id: black
+        args: ["--line-length=120"]
+
+  # ── isort — Import sorting ───────────────────────────────────────────────────
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length=120"]
+
+  # ── Ruff — Fast Python linter ────────────────────────────────────────────────
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.0
+    hooks:
+      - id: ruff
+        args:
+          - "--line-length=120"
+          - "--select=E,W,F,I,C,B,UP,ARG,RUF"
+          - "--ignore=E501,B008"
+          - "--fix"
+
+  # ── Mypy — Static type checker ───────────────────────────────────────────────
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.13.0
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - "pydantic>=2.10.0"
+          - "pydantic-settings>=2.7.0"
+          - "sqlalchemy>=2.0.36"
+          - "fastapi>=0.115.0"
+          - "types-python-jose>=3.3.4"
+        args: ["--strict", "--ignore-missing-imports"]
+        exclude: ^tests/
+
+  # ── Pytest — Unit tests ──────────────────────────────────────────────────────
+  - repo: local
+    hooks:
+      - id: pytest-unit
+        name: pytest (unit)
+        entry: bash -c 'uv run pytest tests/unit -v --tb=short --no-header -q'
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+ci:
+  autofix_commit_msg: |
+    [pre-commit.ci] auto fixes from pre-commit.com hooks
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
+  autoupdate_schedule: weekly
+  skip: []
+  submodules: false

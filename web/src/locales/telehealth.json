@@ -1,0 +1,82 @@
+{
+  "en": {
+    "title": "Telehealth",
+    "subtitle": "Book and manage virtual consultations",
+
+    "filters": {
+      "searchPlaceholder": "Search by name or specialty",
+      "specialty": "Specialty",
+      "allSpecialties": "All Specialties",
+      "language": "Language"
+    },
+
+    "specialty": {
+      "general_practitioner": "General Practitioner",
+      "cardiologist": "Cardiologist",
+      "dermatologist": "Dermatologist",
+      "endocrinologist": "Endocrinologist",
+      "neurologist": "Neurologist",
+      "oncologist": "Oncologist",
+      "orthopedist": "Orthopedist",
+      "pediatrician": "Pediatrician",
+      "psychiatrist": "Psychiatrist",
+      "psychologist": "Psychologist",
+      "radiologist": "Radiologist",
+      "therapist": "Therapist"
+    },
+
+    "directory": {
+      "loading": "Loading providers...",
+      "emptyTitle": "No providers found",
+      "emptyDescription": "Try adjusting your filters or search term.",
+      "resultCount": "{{count}} provider(s) found"
+    },
+
+    "card": {
+      "book": "Book Appointment",
+      "noRating": "No ratings yet",
+      "free": "Free"
+    },
+
+    "booking": {
+      "title": "Book an Appointment",
+      "selectSlot": "Select a time slot",
+      "noSlots": "No available slots for this provider.",
+      "notesLabel": "Reason for visit (optional)",
+      "notesPlaceholder": "Briefly describe your reason for the appointment...",
+      "confirm": "Book Appointment"
+    },
+
+    "consultationStatus": {
+      "scheduled": "Scheduled",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+
+    "room": {
+      "title": "Consultation Room",
+      "sessionId": "Session ID",
+      "started": "Started",
+      "ended": "Ended",
+      "sessionActive": "Video session is active",
+      "sessionInProgress": "Session in progress",
+      "tokenExpiresAt": "Token expires at",
+      "startSession": "Start Consultation",
+      "endSession": "End Consultation",
+      "patientNotes": "Notes",
+      "notesPlaceholder": "Add notes during the consultation...",
+      "summary": "Post-Visit Summary",
+      "summaryPlaceholder": "Enter the post-visit summary..."
+    },
+
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+
+    "errors": {
+      "load": "Failed to load. Please try again."
+    }
+  }
+}

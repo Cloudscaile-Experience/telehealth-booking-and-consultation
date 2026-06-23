@@ -1,8 +1,10 @@
-# Patient Management Portal — Frontend (Micro-Frontend)
+# Telehealth Booking & Consultation — Frontend (Micro-Frontend)
 
 ## Project Overview
 
 React 19 micro-frontend built with TypeScript, Webpack Module Federation, MUI v7, Redux Toolkit, and TanStack Query. Runs exclusively inside a host application via `cs-ext-utils` — never standalone in production.
+
+The extension provides a **provider directory** (with specialty/language filters), a **booking flow** (time-slot selection modal), and a **consultation room** (video session controls, notes, post-visit summary). The Python FastAPI backend lives in `../py/`.
 
 ## Tech Stack
 

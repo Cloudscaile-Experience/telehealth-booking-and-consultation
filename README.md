@@ -1,77 +1,94 @@
-# Patient Management Portal
+# Telehealth Booking & Consultation
 
-A monorepo containing the backend API and React micro-frontend for the Patient Management Portal extension.
+A monorepo for the Telehealth Booking & Consultation extension — virtual consultation booking, video sessions, and post-visit summaries.
 
-| Directory | Role |
-|-----------|------|
-| `js/` | Fastify REST API — patient CRUD, PostgreSQL via Drizzle ORM |
-| `web/` | React 19 micro-frontend — Module Federation component consumed by the host |
+| Directory | Role                                                                        |
+| --------- | --------------------------------------------------------------------------- |
+| `py/`     | FastAPI REST API — slot availability, bookings, video tokens, consultations |
+| `web/`    | React micro-frontend — provider directory, booking flow, consultation room  |
 
 ---
 
 ## Prerequisites
 
-| Tool | Version |
-|------|---------|
-| Node.js | ≥ 22 |
-| npm | ≥ 10 |
+| Tool                    | Version            |
+| ----------------------- | ------------------ |
+| Python                  | 3.12               |
+| uv                      | latest             |
+| Node.js                 | ≥ 22               |
+| npm                     | ≥ 10               |
 | Docker & Docker Compose | any recent version |
 
 ---
 
-## Quick start
+## Quick Start
 
-### Backend (API)
+### Python Backend
 
 ```sh
-cd js
-cp .env.example .env          # fill in DATABASE_URL and other values
+cd py
+cp .env.example .env          # fill in DATABASE_URL and secret keys
 docker compose -f docker-compose.dev.yml up -d   # start PostgreSQL
-npm install
-npm run db:migrate             # run schema migrations
-npm run dev                    # http://localhost:3000
+uv sync                        # install dependencies
+uv run alembic upgrade head    # apply migrations
+uv run uvicorn telehealth.app.main:create_app --factory --reload
+# → http://localhost:8000/docs
 ```
 
-### Frontend (micro-frontend)
+### Web Frontend
 
 ```sh
 cd web
 npm install
-npm start                      # Webpack dev server — http://localhost:4000
-```
-
-> The micro-frontend is designed to run inside a host application in production. The dev server is for local development only.
-
----
-
-## Repository structure
-
-```
-patient-management-portal/
-├── js/          # Fastify API server (see js/README.md)
-├── web/         # React micro-frontend (see web/README.md)
-├── lefthook.yml # Pre-commit and pre-push git hooks for both packages
-└── .gitignore
+npm start
+# → http://localhost:4000
 ```
 
 ---
 
-## Git hooks (Lefthook)
+## API Overview
 
-Hooks are installed automatically when you run `npm install` inside `js/`. To install manually:
+| Route                                    | Description                                                      |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| `GET /health`                            | Liveness probe                                                   |
+| `GET /health/ready`                      | Readiness probe (checks DB)                                      |
+| `GET /v1/providers`                      | List providers (filterable by specialty, language, availability) |
+| `POST /v1/providers`                     | Create provider                                                  |
+| `GET /v1/providers/{id}/availability`    | List available time slots                                        |
+| `POST /v1/providers/{id}/availability`   | Add availability slot                                            |
+| `DELETE /v1/availability/{id}`           | Remove availability slot                                         |
+| `GET /v1/bookings`                       | List my bookings (auth required)                                 |
+| `POST /v1/bookings`                      | Book a slot (auth required)                                      |
+| `POST /v1/bookings/{id}/confirm`         | Confirm booking → creates consultation                           |
+| `GET /v1/consultations/{id}`             | Get consultation details                                         |
+| `POST /v1/consultations/{id}/start`      | Start consultation → issues video token                          |
+| `POST /v1/consultations/{id}/end`        | End consultation                                                 |
+| `GET /v1/consultations/{id}/video-token` | Refresh video token                                              |
+| `PATCH /v1/consultations/{id}/notes`     | Update provider/patient notes                                    |
+| `PATCH /v1/consultations/{id}/summary`   | Add post-visit summary                                           |
+
+---
+
+## Git Hooks (Lefthook)
+
+Hooks run automatically on commit and push. Install with:
 
 ```sh
+# Web/JS hooks (via npm)
 cd js && npx lefthook install
+
+# Python hooks (via pre-commit)
+cd py && uv run pre-commit install
 ```
 
-| Hook | Jobs |
-|------|------|
-| `pre-commit` | Biome lint + format (both `js/` and `web/`), TypeScript check (both) |
-| `pre-push` | Vitest test suite (`js/`) |
+| Hook         | Jobs                                                                 |
+| ------------ | -------------------------------------------------------------------- |
+| `pre-commit` | web: Biome lint/format + TypeScript; py: black + isort + ruff + mypy |
+| `pre-push`   | js: Vitest; py: pytest unit tests                                    |
 
 ---
 
-## Further reading
+## Further Reading
 
-- [Backend API — `js/README.md`](./js/README.md)
-- [Micro-frontend — `web/README.md`](./web/README.md)
+- [Python Backend — `py/CLAUDE.md`](./py/CLAUDE.md)
+- [Web Frontend — `web/README.md`](./web/README.md)

@@ -12,15 +12,17 @@ Never hardcode user-facing strings in JSX. All copy goes through `react-i18next`
 ```json
 // src/locales/myFeature.json
 {
-  "title": "Patient Management",
-  "empty": "No patients found",
-  "actions": {
-    "add": "Add Patient",
-    "edit": "Edit",
-    "delete": "Delete"
-  },
-  "errors": {
-    "load": "Failed to load patients. Please try again."
+  "en": {
+    "title": "Patient Management",
+    "empty": "No patients found",
+    "actions": {
+      "add": "Add Patient",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "errors": {
+      "load": "Failed to load patients. Please try again."
+    }
   }
 }
 ```
@@ -29,10 +31,10 @@ Never hardcode user-facing strings in JSX. All copy goes through `react-i18next`
 
 ```typescript
 // src/contexts/MyFeature.tsx  (or the container component)
-import { extensionManager } from '@/utils/extension';
-import myFeatureTranslations from '@/locales/myFeature.json';
+import { extensionManager } from "@/utils/extension";
+import myFeatureTranslations from "@/locales/myFeature.json";
 
-const ns = extensionManager.getNsForTranslation('myFeature');
+const ns = extensionManager.getNsForTranslation("myFeature");
 extensionManager.registerTranslation(ns, myFeatureTranslations);
 
 // Export ns so child components can access it via context or props

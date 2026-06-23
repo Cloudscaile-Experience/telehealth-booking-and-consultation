@@ -1,0 +1,165 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "telehealth"
+version = "0.1.0"
+description = "Telehealth Booking & Consultation Backend — FastAPI + SQLAlchemy + asyncpg"
+readme = "README.md"
+requires-python = "==3.12.*"
+license = { text = "MIT" }
+authors = [{ name = "Denzil Rodrigues", email = "devops@cloudscaile.com" }]
+keywords = ["fastapi", "telehealth", "booking", "consultation", "video"]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "uvloop>=0.21.0",
+    "sqlalchemy>=2.0.36",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.7.0",
+    "pydantic[email]>=2.10.0",
+    "python-jose[cryptography]>=3.3.0",
+    "httpx>=0.28.0",
+    "tenacity>=9.0.0",
+    "prometheus-client>=0.21.0",
+    "greenlet>=3.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+    "isort==5.13.2",
+    "pre-commit>=4.0.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+    "faker>=33.0.0",
+    "aiosqlite>=0.20.0",
+    "polyfactory>=2.20.0",
+    "freezegun>=1.5.1",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "types-python-jose>=3.3.4",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/telehealth"]
+
+# ── Black ──────────────────────────────────────────────────────────────────────
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  \.eggs | \.git | \.hg | \.mypy_cache | \.tox | \.venv | build | dist
+)/
+'''
+
+# ── isort ─────────────────────────────────────────────────────────────────────
+[tool.isort]
+profile = "black"
+line_length = 120
+lines_between_sections = 1
+known_first_party = ["telehealth"]
+
+# ── Ruff ──────────────────────────────────────────────────────────────────────
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "C", "B", "UP", "ARG", "RUF"]
+ignore = [
+    "E501",  # line too long — handled by black
+    "B008",  # function call in default arg
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["telehealth"]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 12
+
+# ── Mypy ──────────────────────────────────────────────────────────────────────
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+no_implicit_optional = true
+strict_equality = true
+check_untyped_defs = true
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+disallow_untyped_calls = false
+
+# ── Coverage ──────────────────────────────────────────────────────────────────
+[tool.coverage.run]
+source = ["src/telehealth"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "class .*\\bProtocol\\):",
+    "@abstractmethod",
+]
+precision = 2
+show_missing = true
+# Enforce 80% once integration tests are in place; omitted here to allow
+# unit-only runs during development without false failures.
+# fail_under = 80
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.coverage.lcov]
+output = "coverage.lcov"
+
+# ── Pytest ────────────────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--disable-warnings",
+    "--cov=src/telehealth",
+    "--cov-report=lcov",
+    "--cov-report=term-missing",
+]
+markers = [
+    "unit: Unit tests (fast, mocked dependencies)",
+    "integration: Integration tests (slower, real components)",
+    "database: Database tests",
+    "asyncio: Async tests",
+    "slow: Slow tests (skip with -m 'not slow')",
+    "auth: Authentication tests",
+]

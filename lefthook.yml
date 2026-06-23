@@ -1,23 +1,15 @@
-# Lefthook — git hook configuration for the patient-management-portal monorepo
+# Lefthook — git hook configuration for the telehealth monorepo
 # Docs: https://lefthook.dev/configuration/
 #
-# Hooks are installed automatically when you run `npm install` inside js/.
-# To (re)install manually:  cd js && npx lefthook install
+# Web hooks: run automatically via npm install inside web/.
+# Python hooks: managed via pre-commit inside py/.
+#   Install: cd py && uv run pre-commit install
+#   Run manually: cd py && uv run pre-commit run --all-files
 
 pre-commit:
   parallel: true
   jobs:
-    - name: js — biome lint + format
-      root: "js/"
-      glob: "*.{ts,tsx,js,jsx,json}"
-      run: npx @biomejs/biome check --write {staged_files}
-      stage_fixed: true
-
-    - name: js — typescript
-      root: "js/"
-      glob: "*.ts"
-      run: npx tsc --noEmit
-
+    # ── Web (React micro-frontend) ─────────────────────────────────────────────
     - name: web — biome lint + format
       root: "web/"
       glob: "*.{ts,tsx,js,jsx,json}"
@@ -29,9 +21,34 @@ pre-commit:
       glob: "*.{ts,tsx}"
       run: npx tsc --noEmit
 
+    # ── Python backend ─────────────────────────────────────────────────────────
+    - name: py — black (format)
+      root: "py/"
+      glob: "*.py"
+      run: uv run black {staged_files}
+      stage_fixed: true
+
+    - name: py — isort (imports)
+      root: "py/"
+      glob: "*.py"
+      run: uv run isort {staged_files}
+      stage_fixed: true
+
+    - name: py — ruff (lint + fix)
+      root: "py/"
+      glob: "*.py"
+      run: uv run ruff check --fix {staged_files}
+      stage_fixed: true
+
+    - name: py — mypy (types)
+      root: "py/"
+      glob: "*.py"
+      run: uv run mypy {staged_files} --ignore-missing-imports
+
 pre-push:
   jobs:
-    - name: js — vitest
-      root: "js/"
-      glob: "*.ts"
-      run: npm test
+    # ── Python unit tests (run on push) ───────────────────────────────────────
+    - name: py — pytest unit
+      root: "py/"
+      glob: "*.py"
+      run: uv run pytest tests/unit -v --tb=short -q

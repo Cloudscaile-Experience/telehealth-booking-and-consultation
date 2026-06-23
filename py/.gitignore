@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# uv
+.uv/
+
+# Distribution / packaging
+.Python
+pip-wheel-metadata/
+share/python-wheels/
+wheels/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+coverage.lcov
+htmlcov/
+.tox/
+nosetests.xml
+test-results/
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Environments
+.env
+.env.local
+.env.*.local
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Alembic
+alembic/versions/*.py
+!alembic/versions/.gitkeep
+
+# Logs
+*.log
+logs/

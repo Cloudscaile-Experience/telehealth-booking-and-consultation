@@ -1,1 +1,1 @@
-export { default as PatientManagementContainer } from './PatientManagementContainer';
+export { default as TelehealthContainer } from './TelehealthContainer';

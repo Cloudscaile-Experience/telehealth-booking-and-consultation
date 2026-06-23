@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run uvicorn *)",
+      "Bash(uv run pytest*)",
+      "Bash(uv run pre-commit *)",
+      "Bash(uv sync*)",
+      "Bash(uv add *)",
+      "Bash(uv remove *)",
+      "Bash(uv venv*)",
+      "Bash(uv run alembic *)",
+      "Bash(docker compose *)",
+      "Bash(docker-compose *)"
+    ]
+  }
+}

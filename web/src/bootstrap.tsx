@@ -1,8 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import PatientManagement from '@/components/PatientManagement';
-import App, { ns } from './App';
+import App from './App';
 import './index.css';
 
 const rootElement = document.getElementById('root');
@@ -12,8 +11,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <App>
-      <PatientManagement ns={ns} />
-    </App>
+    <App />
   </StrictMode>
 );
