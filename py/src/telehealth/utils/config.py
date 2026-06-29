@@ -20,14 +20,13 @@ class Settings(BaseSettings):
     PG_PORT: int = Field(default=5432)
     PG_USERNAME: str = Field(default="postgres")
     PG_PASSWORD: str = Field(default="postgres")
-    PG_DATABASE: str = Field(default="patient_portal_dev")
+    PG_DB: str = Field(default="patient_portal_dev")
 
     @computed_field  # type: ignore[prop-decorator]
     @property
     def database_url(self) -> str:
         return (
-            f"postgresql+asyncpg://{self.PG_USERNAME}:{self.PG_PASSWORD}"
-            f"@{self.PG_HOST}:{self.PG_PORT}/{self.PG_DATABASE}"
+            f"postgresql+asyncpg://{self.PG_USERNAME}:{self.PG_PASSWORD}" f"@{self.PG_HOST}:{self.PG_PORT}/{self.PG_DB}"
         )
 
     # ── Video Sessions ─────────────────────────────────────────────────────────

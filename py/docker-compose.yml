@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${PG_DATABASE:-patient_portal_dev}
+      POSTGRES_DB: ${PG_DB:-patient_portal_dev}
       POSTGRES_USER: ${PG_USERNAME:-postgres}
       POSTGRES_PASSWORD: ${PG_PASSWORD:-postgres}
     volumes:
@@ -13,7 +13,7 @@ services:
     healthcheck:
       test:
         - "CMD-SHELL"
-        - "pg_isready -U ${PG_USERNAME:-postgres} -d ${PG_DATABASE:-patient_portal_dev}"
+        - "pg_isready -U ${PG_USERNAME:-postgres} -d ${PG_DB:-patient_portal_dev}"
       interval: 10s
       timeout: 5s
       retries: 5
@@ -34,7 +34,7 @@ services:
       PG_PORT: 5432
       PG_USERNAME: ${PG_USERNAME:-postgres}
       PG_PASSWORD: ${PG_PASSWORD:-postgres}
-      PG_DATABASE: ${PG_DATABASE:-patient_portal_dev}
+      PG_DB: ${PG_DB:-patient_portal_dev}
       VIDEO_SESSION_SECRET: ${VIDEO_SESSION_SECRET:-VIDEO_SESSION_SECRET}
       VIDEO_SESSION_EXPIRY_MINUTES: ${VIDEO_SESSION_EXPIRY_MINUTES:-90}
       GATEWAY_BASE_URL: ${GATEWAY_BASE_URL:-}
