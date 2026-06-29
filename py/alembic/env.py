@@ -1,15 +1,14 @@
 import asyncio
 from logging.config import fileConfig
 
-from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from telehealth.db.base import Base
-
 # Import all models so their tables are registered with Base.metadata
 import telehealth.db.models  # noqa: F401
+from alembic import context
+from telehealth.db.base import Base
 
 config = context.config
 
@@ -22,10 +21,7 @@ target_metadata = Base.metadata
 def get_url() -> str:
     from telehealth.utils.config import settings
 
-    url = settings.DATABASE_URL
-    if url.startswith("postgresql://"):
-        url = url.replace("postgresql://", "postgresql+asyncpg://", 1)
-    return url
+    return settings.database_url
 
 
 def run_migrations_offline() -> None:

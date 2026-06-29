@@ -1,7 +1,7 @@
 # Local development — starts PostgreSQL only.
 # The API runs on the host for hot-reload:
 #
-#   cp .env.example .env   # edit DATABASE_URL → localhost:5432
+#   cp .env.example .env   # edit PG_* vars if needed
 #   uv run alembic upgrade head
 #   uv run uvicorn telehealth.app.main:create_app --factory --reload
 
@@ -10,15 +10,15 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: telehealth_dev
-      POSTGRES_USER: telehealth
-      POSTGRES_PASSWORD: telehealth
+      POSTGRES_DB: patient_portal_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_dev_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U telehealth -d telehealth_dev"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d patient_portal_dev"]
       interval: 10s
       timeout: 5s
       retries: 5

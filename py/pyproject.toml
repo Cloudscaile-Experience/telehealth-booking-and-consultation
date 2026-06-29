@@ -105,6 +105,10 @@ ignore_missing_imports = true
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_untyped_calls = false
+# Partial mypy runs (commit hook) check fewer files, changing which errors appear
+# and making some ignores spuriously "unused". Disable the warning for test files.
+warn_unused_ignores = false
+
 
 # ── Coverage ──────────────────────────────────────────────────────────────────
 [tool.coverage.run]

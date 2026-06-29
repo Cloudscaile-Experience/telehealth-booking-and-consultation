@@ -19,7 +19,7 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get("", response_model=PaginatedResponse[ProviderResponse], summary="List providers")  # type: ignore[misc]
+@router.get("", response_model=PaginatedResponse[ProviderResponse], summary="List providers")
 async def list_providers(
     query: ListProvidersQuery = Depends(),
     session: AsyncSession = Depends(get_session),
@@ -29,7 +29,7 @@ async def list_providers(
     return await provider_service.list_providers(session, query)
 
 
-@router.get("/{provider_id}", response_model=ProviderResponse, summary="Get provider")  # type: ignore[misc]
+@router.get("/{provider_id}", response_model=ProviderResponse, summary="Get provider")
 async def get_provider(
     provider_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
@@ -40,7 +40,7 @@ async def get_provider(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
 
 
-@router.post("", response_model=ProviderResponse, status_code=status.HTTP_201_CREATED, summary="Create provider")  # type: ignore[misc]
+@router.post("", response_model=ProviderResponse, status_code=status.HTTP_201_CREATED, summary="Create provider")
 async def create_provider(
     body: CreateProviderRequest,
     session: AsyncSession = Depends(get_session),
@@ -51,7 +51,7 @@ async def create_provider(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.patch("/{provider_id}", response_model=ProviderResponse, summary="Update provider")  # type: ignore[misc]
+@router.patch("/{provider_id}", response_model=ProviderResponse, summary="Update provider")
 async def update_provider(
     provider_id: uuid.UUID,
     body: UpdateProviderRequest,
@@ -63,7 +63,7 @@ async def update_provider(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
 
 
-@router.delete("/{provider_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete provider")  # type: ignore[misc]
+@router.delete("/{provider_id}", status_code=status.HTTP_204_NO_CONTENT, summary="Delete provider")
 async def delete_provider(
     provider_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),

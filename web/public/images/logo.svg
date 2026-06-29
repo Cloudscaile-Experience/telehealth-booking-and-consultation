@@ -3,7 +3,7 @@
   .loader {
     color: black; /* Default for light mode */
   }
-  
+
   @media (prefers-color-scheme: dark) {
     .loader {
       color: white; /* Changes to white in dark mode */

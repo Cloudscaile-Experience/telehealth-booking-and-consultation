@@ -49,7 +49,7 @@ async def list_bookings(
     if query.provider_id:
         stmt = stmt.where(Booking.provider_id == query.provider_id)
 
-    stmt = stmt.order_by(Booking.created_at.desc())  # type: ignore[union-attr]
+    stmt = stmt.order_by(Booking.created_at.desc())
 
     count_stmt = select(func.count()).select_from(stmt.subquery())
     total: int = (await session.execute(count_stmt)).scalar_one()
@@ -65,14 +65,8 @@ async def list_bookings(
     )
 
 
-async def get_booking(
-    session: AsyncSession, booking_id: uuid.UUID, patient_id: str
-) -> BookingDetailResponse:
-    result = await session.execute(
-        select(Booking)
-        .options(selectinload(Booking.slot))  # type: ignore[arg-type]
-        .where(Booking.id == booking_id)
-    )
+async def get_booking(session: AsyncSession, booking_id: uuid.UUID, patient_id: str) -> BookingDetailResponse:
+    result = await session.execute(select(Booking).options(selectinload(Booking.slot)).where(Booking.id == booking_id))
     booking = result.scalar_one_or_none()
 
     if not booking:

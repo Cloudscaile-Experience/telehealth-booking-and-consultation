@@ -17,13 +17,13 @@ def _decode_jwt_payload(token: str) -> dict[str, Any]:
     This service only reads the encoded claims.
     """
     parts = token.split(".")
-    if len(parts) != 3:  # noqa: PLR2004
+    if len(parts) != 3:
         raise ValueError("Malformed JWT: expected 3 dot-separated segments")
 
     payload_segment = parts[1]
     # Base64url may omit padding — restore it before decoding
     padding = 4 - len(payload_segment) % 4
-    if padding != 4:  # noqa: PLR2004
+    if padding != 4:
         payload_segment += "=" * padding
 
     decoded_bytes = base64.urlsafe_b64decode(payload_segment)
@@ -107,7 +107,7 @@ def _bearer_token(authorization: str | None) -> str:
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authorization header must use Bearer scheme",
         )
-    return authorization[len("Bearer "):]
+    return authorization[len("Bearer ") :]
 
 
 async def get_current_user(

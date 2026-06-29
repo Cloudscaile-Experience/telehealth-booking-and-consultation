@@ -3,8 +3,10 @@
 No signature verification happens here — that is the API gateway's responsibility.
 Tests cover raw payload decoding, UserContext extraction, claim mapping, and error paths.
 """
+
 import base64
 import json
+from collections.abc import Mapping
 
 import pytest
 
@@ -12,7 +14,7 @@ from telehealth.middleware.auth import _decode_jwt_payload, extract_user_context
 from telehealth.schemas.user import UserContext
 
 
-def _make_token(payload: dict, valid_sig: bool = True) -> str:
+def _make_token(payload: Mapping[str, object], valid_sig: bool = True) -> str:
     """Build a minimal JWT-shaped token for testing (no real signing)."""
     header = base64.urlsafe_b64encode(b'{"alg":"HS256","typ":"JWT"}').rstrip(b"=").decode()
     body = base64.urlsafe_b64encode(json.dumps(payload).encode()).rstrip(b"=").decode()

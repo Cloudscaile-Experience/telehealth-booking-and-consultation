@@ -33,19 +33,17 @@ async def list_providers(
     query: ListProvidersQuery,
 ) -> PaginatedResponse[ProviderResponse]:
     """Return a paginated, filtered list of active providers."""
-    stmt = select(Provider).where(Provider.is_active.is_(True))  # type: ignore[union-attr]
-
+    stmt = select(Provider).where(Provider.is_active.is_(True))
     if query.specialty:
         stmt = stmt.where(Provider.specialty == query.specialty.value)
 
     if query.language:
-        stmt = stmt.where(Provider.languages.ilike(f"%{query.language}%"))  # type: ignore[union-attr]
-
+        stmt = stmt.where(Provider.languages.ilike(f"%{query.language}%"))
     if query.search:
         stmt = stmt.where(
             or_(
-                Provider.name.ilike(f"%{query.search}%"),  # type: ignore[union-attr]
-                Provider.specialty.ilike(f"%{query.search}%"),  # type: ignore[union-attr]
+                Provider.name.ilike(f"%{query.search}%"),
+                Provider.specialty.ilike(f"%{query.search}%"),
             )
         )
 
@@ -55,7 +53,7 @@ async def list_providers(
             .where(
                 AvailabilitySlot.start_time >= query.available_from,
                 AvailabilitySlot.end_time <= query.available_to,
-                AvailabilitySlot.is_booked.is_(False),  # type: ignore[union-attr]
+                AvailabilitySlot.is_booked.is_(False),
             )
             .distinct()
         )

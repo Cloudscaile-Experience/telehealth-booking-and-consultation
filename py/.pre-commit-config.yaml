@@ -59,7 +59,7 @@ repos:
           - "fastapi>=0.115.0"
           - "types-python-jose>=3.3.4"
         args: ["--strict", "--ignore-missing-imports"]
-        exclude: ^tests/
+        exclude: ^(tests/|alembic/)
 
   # ── Pytest — Unit tests ──────────────────────────────────────────────────────
   - repo: local

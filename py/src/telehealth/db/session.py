@@ -1,7 +1,8 @@
 import contextlib
 from collections.abc import AsyncIterator
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
 
 from telehealth.utils.logger import get_logger
 
@@ -12,26 +13,33 @@ class AsyncSessionManager:
     """Manages the async SQLAlchemy engine and session factory lifecycle."""
 
     def __init__(self) -> None:
-        self._engine = None
+        self._engine: AsyncEngine | None = None
         self._session_maker: async_sessionmaker[AsyncSession] | None = None
 
     async def init(self, database_url: str) -> None:
-        # Upgrade postgresql:// to the asyncpg dialect automatically
-        if database_url.startswith("postgresql://"):
-            database_url = database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
-
-        self._engine = create_async_engine(
+        engine = create_async_engine(
             database_url,
             pool_size=5,
             max_overflow=10,
             echo=False,
         )
         self._session_maker = async_sessionmaker(
-            bind=self._engine,
+            bind=engine,
             expire_on_commit=False,
             autocommit=False,
             autoflush=False,
         )
+
+        # Verify connectivity at startup — fail fast if the DB is unreachable.
+        try:
+            async with engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+        except Exception as exc:
+            await engine.dispose()
+            self._session_maker = None
+            raise RuntimeError(f"Database is unavailable — cannot start: {exc}") from exc
+
+        self._engine = engine
         logger.info("Database connection pool initialised")
 
     async def close(self) -> None:

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from fastapi import APIRouter
 from sqlalchemy import text
@@ -12,17 +12,17 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get("/health", response_model=HealthResponse, tags=["health"])  # type: ignore[misc]
+@router.get("/health", response_model=HealthResponse, tags=["health"])
 async def health() -> HealthResponse:
     """Liveness probe — returns 200 as long as the process is running."""
     return HealthResponse(
         status="ok",
         version=settings.APP_VERSION,
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
     )
 
 
-@router.get("/health/ready", response_model=ReadinessResponse, tags=["health"])  # type: ignore[misc]
+@router.get("/health/ready", response_model=ReadinessResponse, tags=["health"])
 async def readiness() -> ReadinessResponse:
     """Readiness probe — verifies database connectivity before declaring healthy."""
     db_status = "ok"
@@ -36,5 +36,5 @@ async def readiness() -> ReadinessResponse:
     return ReadinessResponse(
         status="ok" if db_status == "ok" else "degraded",
         database=db_status,
-        timestamp=datetime.now(timezone.utc),
+        timestamp=datetime.now(UTC),
     )

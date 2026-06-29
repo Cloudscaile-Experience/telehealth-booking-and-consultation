@@ -61,7 +61,7 @@ def _build_custom_openapi(app: FastAPI) -> Callable[[], dict[str, Any]]:
 
     def custom_openapi() -> dict[str, Any]:
         if app.openapi_schema:
-            return app.openapi_schema  # type: ignore[return-value]
+            return app.openapi_schema
 
         schema = get_openapi(
             title=settings.APP_NAME,
@@ -115,7 +115,7 @@ def _build_custom_openapi(app: FastAPI) -> Callable[[], dict[str, Any]]:
                     continue
 
                 if path.startswith("/open/api/v1"):
-                    # Public API key–protected endpoints (webhooks, integration endpoints)
+                    # Public API key-protected endpoints (webhooks, integration endpoints)
                     operation.setdefault("security", []).append({"ApiKeyAuth": []})
                 elif not path.startswith("/open"):
                     # All domain routes (/v1/*) — Bearer JWT required
@@ -123,15 +123,15 @@ def _build_custom_openapi(app: FastAPI) -> Callable[[], dict[str, Any]]:
                 # /open/* but not /open/api/v1/* → no security (health, docs)
 
         app.openapi_schema = schema
-        return schema  # type: ignore[return-value]
+        return schema
 
     return custom_openapi
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:  # type: ignore[misc]
+async def lifespan(_app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("Starting Telehealth API", extra={"version": settings.APP_VERSION, "env": settings.ENVIRONMENT})
-    await sessionmanager.init(settings.DATABASE_URL)
+    await sessionmanager.init(settings.database_url)
     yield
     await sessionmanager.close()
     logger.info("Telehealth API shutdown complete")
@@ -182,7 +182,7 @@ def create_app() -> FastAPI:
     app.add_middleware(GZipMiddleware, minimum_size=1000)
 
     # ── Global error handler ───────────────────────────────────────────────────
-    @app.exception_handler(Exception)  # type: ignore[misc]
+    @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         logger.error("Unhandled exception", extra={"path": request.url.path, "error": str(exc)})
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})

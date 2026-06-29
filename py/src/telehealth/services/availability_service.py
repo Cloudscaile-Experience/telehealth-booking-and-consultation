@@ -1,6 +1,5 @@
 import uuid
 from collections.abc import Sequence
-from datetime import datetime, timezone
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -41,7 +40,7 @@ async def list_slots(
     stmt = select(AvailabilitySlot).where(AvailabilitySlot.provider_id == provider_id)
 
     if not query.include_booked:
-        stmt = stmt.where(AvailabilitySlot.is_booked.is_(False))  # type: ignore[union-attr]
+        stmt = stmt.where(AvailabilitySlot.is_booked.is_(False))
 
     if query.from_time:
         stmt = stmt.where(AvailabilitySlot.start_time >= query.from_time)
@@ -99,7 +98,7 @@ async def create_slot(
     if overlap:
         raise SlotOverlapError(
             f"Slot overlaps with existing slot {overlap.id} "
-            f"({overlap.start_time.isoformat()} – {overlap.end_time.isoformat()})"
+            f"({overlap.start_time.isoformat()} - {overlap.end_time.isoformat()})"
         )
 
     slot = AvailabilitySlot(

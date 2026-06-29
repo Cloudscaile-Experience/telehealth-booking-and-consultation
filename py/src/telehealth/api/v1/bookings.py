@@ -25,7 +25,7 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get("", response_model=PaginatedResponse[BookingResponse], summary="List my bookings")  # type: ignore[misc]
+@router.get("", response_model=PaginatedResponse[BookingResponse], summary="List my bookings")
 async def list_bookings(
     query: ListBookingsQuery = Depends(),
     session: AsyncSession = Depends(get_session),
@@ -35,7 +35,7 @@ async def list_bookings(
     return await booking_service.list_bookings(session, patient_id, query)
 
 
-@router.get("/{booking_id}", response_model=BookingDetailResponse, summary="Get booking")  # type: ignore[misc]
+@router.get("/{booking_id}", response_model=BookingDetailResponse, summary="Get booking")
 async def get_booking(
     booking_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
@@ -49,7 +49,7 @@ async def get_booking(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
 
 
-@router.post(  # type: ignore[misc]
+@router.post(
     "",
     response_model=BookingResponse,
     status_code=status.HTTP_201_CREATED,
@@ -66,7 +66,7 @@ async def create_booking(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.patch("/{booking_id}", response_model=BookingResponse, summary="Update booking")  # type: ignore[misc]
+@router.patch("/{booking_id}", response_model=BookingResponse, summary="Update booking")
 async def update_booking(
     booking_id: uuid.UUID,
     body: UpdateBookingRequest,
@@ -81,7 +81,7 @@ async def update_booking(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(err)) from err
 
 
-@router.post("/{booking_id}/confirm", response_model=BookingResponse, summary="Confirm booking")  # type: ignore[misc]
+@router.post("/{booking_id}/confirm", response_model=BookingResponse, summary="Confirm booking")
 async def confirm_booking(
     booking_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),

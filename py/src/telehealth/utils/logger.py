@@ -1,9 +1,8 @@
 import logging
 import sys
-from typing import Optional
 
 
-def get_logger(name: str, level: Optional[int] = None) -> logging.Logger:
+def get_logger(name: str, level: int | None = None) -> logging.Logger:
     """Return a named logger with a stdout handler if not already configured."""
     logger = logging.getLogger(name)
 

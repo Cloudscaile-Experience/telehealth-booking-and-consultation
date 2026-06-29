@@ -43,7 +43,7 @@ nosetests.xml
 test-results/
 
 # Mypy
-.mypy_cache/
+.mypy_cache
 .dmypy.json
 dmypy.json
 

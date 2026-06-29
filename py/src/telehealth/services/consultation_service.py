@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,18 +28,14 @@ class ConsultationStateError(Exception):
     pass
 
 
-async def get_consultation(
-    session: AsyncSession, consultation_id: uuid.UUID
-) -> ConsultationResponse:
+async def get_consultation(session: AsyncSession, consultation_id: uuid.UUID) -> ConsultationResponse:
     consultation = await session.get(Consultation, consultation_id)
     if not consultation:
         raise ConsultationNotFoundError(consultation_id)
     return ConsultationResponse.model_validate(consultation)
 
 
-async def get_consultation_by_booking(
-    session: AsyncSession, booking_id: uuid.UUID
-) -> ConsultationResponse:
+async def get_consultation_by_booking(session: AsyncSession, booking_id: uuid.UUID) -> ConsultationResponse:
     result = await session.execute(select(Consultation).where(Consultation.booking_id == booking_id))
     consultation = result.scalar_one_or_none()
     if not consultation:
@@ -47,9 +43,7 @@ async def get_consultation_by_booking(
     return ConsultationResponse.model_validate(consultation)
 
 
-async def create_consultation_for_booking(
-    session: AsyncSession, booking: Booking
-) -> ConsultationResponse:
+async def create_consultation_for_booking(session: AsyncSession, booking: Booking) -> ConsultationResponse:
     """Create a Consultation record linked to the given Booking."""
     session_id = new_session_id()
 
@@ -77,13 +71,11 @@ async def start_consultation(
     if not consultation:
         raise ConsultationNotFoundError(consultation_id)
     if consultation.status not in (ConsultationStatus.SCHEDULED, ConsultationStatus.IN_PROGRESS):
-        raise ConsultationStateError(
-            f"Cannot start a consultation with status '{consultation.status}'"
-        )
+        raise ConsultationStateError(f"Cannot start a consultation with status '{consultation.status}'")
 
     consultation.status = ConsultationStatus.IN_PROGRESS
     if not consultation.started_at:
-        consultation.started_at = datetime.now(timezone.utc)
+        consultation.started_at = datetime.now(UTC)
 
     token_response = generate_video_token(consultation.video_session_id, participant_id)
     consultation.video_session_token = token_response.token
@@ -94,20 +86,16 @@ async def start_consultation(
     return token_response
 
 
-async def end_consultation(
-    session: AsyncSession, consultation_id: uuid.UUID
-) -> ConsultationResponse:
+async def end_consultation(session: AsyncSession, consultation_id: uuid.UUID) -> ConsultationResponse:
     """Mark the consultation as completed and update the linked booking."""
     consultation = await session.get(Consultation, consultation_id)
     if not consultation:
         raise ConsultationNotFoundError(consultation_id)
     if consultation.status != ConsultationStatus.IN_PROGRESS:
-        raise ConsultationStateError(
-            f"Cannot end a consultation with status '{consultation.status}'"
-        )
+        raise ConsultationStateError(f"Cannot end a consultation with status '{consultation.status}'")
 
     consultation.status = ConsultationStatus.COMPLETED
-    consultation.ended_at = datetime.now(timezone.utc)
+    consultation.ended_at = datetime.now(UTC)
     consultation.video_session_token = None
 
     booking = await session.get(Booking, consultation.booking_id)

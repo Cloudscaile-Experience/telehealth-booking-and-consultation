@@ -3,8 +3,8 @@
 Tests verify token generation, expiry encoding, and decode/verify behaviour
 without any network or database calls.
 """
-from datetime import datetime, timezone
-from unittest.mock import patch
+
+from datetime import UTC, datetime
 
 import pytest
 from freezegun import freeze_time
@@ -31,15 +31,15 @@ class TestNewSessionId:
 
 @pytest.mark.unit
 class TestGenerateVideoToken:
-    @freeze_time("2026-06-23T10:00:00Z")
+    @freeze_time("2026-06-23T10:00:00Z")  # type: ignore[misc]
     def test_returns_token_response(self) -> None:
         result = generate_video_token("sess_abc", "patient-123")
 
         assert result.session_id == "sess_abc"
         assert result.token
-        assert result.expires_at > datetime.now(timezone.utc)
+        assert result.expires_at > datetime.now(UTC)
 
-    @freeze_time("2026-06-23T10:00:00Z")
+    @freeze_time("2026-06-23T10:00:00Z")  # type: ignore[misc]
     def test_token_encodes_correct_claims(self) -> None:
         result = generate_video_token("sess_xyz", "provider-456")
 
@@ -49,12 +49,12 @@ class TestGenerateVideoToken:
         assert payload["participant_id"] == "provider-456"
         assert payload["type"] == "video_session"
 
-    @freeze_time("2026-06-23T10:00:00Z")
+    @freeze_time("2026-06-23T10:00:00Z")  # type: ignore[misc]
     def test_expiry_matches_config(self) -> None:
         result = generate_video_token("sess_exp", "user-1")
 
         payload = jwt.decode(result.token, settings.VIDEO_SESSION_SECRET, algorithms=[settings.JWT_ALGORITHM])
-        now_ts = int(datetime(2026, 6, 23, 10, 0, 0, tzinfo=timezone.utc).timestamp())
+        now_ts = int(datetime(2026, 6, 23, 10, 0, 0, tzinfo=UTC).timestamp())
         expected_exp = now_ts + settings.VIDEO_SESSION_EXPIRY_MINUTES * 60
         assert payload["exp"] == expected_exp
 

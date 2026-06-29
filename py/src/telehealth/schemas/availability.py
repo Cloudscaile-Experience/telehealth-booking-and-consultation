@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -31,6 +30,6 @@ class AvailabilitySlotResponse(BaseModel):
 class ListAvailabilityQuery(BaseModel):
     page: int = Field(default=1, ge=1)
     page_size: int = Field(default=20, ge=1, le=100)
-    from_time: Optional[datetime] = None
-    to_time: Optional[datetime] = None
+    from_time: datetime | None = None
+    to_time: datetime | None = None
     include_booked: bool = False

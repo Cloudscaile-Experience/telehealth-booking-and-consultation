@@ -1,6 +1,5 @@
 import uuid
 from datetime import datetime
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -12,11 +11,11 @@ class ConsultationResponse(BaseModel):
     booking_id: uuid.UUID
     video_session_id: str
     status: ConsultationStatus
-    started_at: Optional[datetime]
-    ended_at: Optional[datetime]
-    provider_notes: Optional[str]
-    patient_notes: Optional[str]
-    summary: Optional[str]
+    started_at: datetime | None
+    ended_at: datetime | None
+    provider_notes: str | None
+    patient_notes: str | None
+    summary: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -30,8 +29,8 @@ class VideoTokenResponse(BaseModel):
 
 
 class UpdateNotesRequest(BaseModel):
-    provider_notes: Optional[str] = Field(None, max_length=5000)
-    patient_notes: Optional[str] = Field(None, max_length=5000)
+    provider_notes: str | None = Field(None, max_length=5000)
+    patient_notes: str | None = Field(None, max_length=5000)
 
 
 class UpdateSummaryRequest(BaseModel):

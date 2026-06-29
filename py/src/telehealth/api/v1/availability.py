@@ -11,11 +11,7 @@ from telehealth.schemas.availability import (
 )
 from telehealth.schemas.common import PaginatedResponse
 from telehealth.services import availability_service
-from telehealth.services.availability_service import (
-    SlotAlreadyBookedError,
-    SlotNotFoundError,
-    SlotOverlapError,
-)
+from telehealth.services.availability_service import SlotAlreadyBookedError, SlotNotFoundError, SlotOverlapError
 from telehealth.services.provider_service import ProviderNotFoundError
 from telehealth.utils.logger import get_logger
 
@@ -23,7 +19,7 @@ router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get(  # type: ignore[misc]
+@router.get(
     "/providers/{provider_id}/availability",
     response_model=PaginatedResponse[AvailabilitySlotResponse],
     summary="List availability slots",
@@ -38,7 +34,7 @@ async def list_slots(
     return await availability_service.list_slots(session, provider_id, query)
 
 
-@router.post(  # type: ignore[misc]
+@router.post(
     "/providers/{provider_id}/availability",
     response_model=AvailabilitySlotResponse,
     status_code=status.HTTP_201_CREATED,
@@ -57,7 +53,7 @@ async def create_slot(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.delete(  # type: ignore[misc]
+@router.delete(
     "/availability/{slot_id}",
     status_code=status.HTTP_204_NO_CONTENT,
     summary="Delete availability slot",

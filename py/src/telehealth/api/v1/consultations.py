@@ -12,17 +12,14 @@ from telehealth.schemas.consultation import (
     VideoTokenResponse,
 )
 from telehealth.services import consultation_service
-from telehealth.services.consultation_service import (
-    ConsultationNotFoundError,
-    ConsultationStateError,
-)
+from telehealth.services.consultation_service import ConsultationNotFoundError, ConsultationStateError
 from telehealth.utils.logger import get_logger
 
 router = APIRouter()
 logger = get_logger(__name__)
 
 
-@router.get("/{consultation_id}", response_model=ConsultationResponse, summary="Get consultation")  # type: ignore[misc]
+@router.get("/{consultation_id}", response_model=ConsultationResponse, summary="Get consultation")
 async def get_consultation(
     consultation_id: uuid.UUID,
     session: AsyncSession = Depends(get_session),
@@ -33,7 +30,7 @@ async def get_consultation(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
 
 
-@router.post(  # type: ignore[misc]
+@router.post(
     "/{consultation_id}/start",
     response_model=VideoTokenResponse,
     summary="Start consultation",
@@ -52,7 +49,7 @@ async def start_consultation(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.post(  # type: ignore[misc]
+@router.post(
     "/{consultation_id}/end",
     response_model=ConsultationResponse,
     summary="End consultation",
@@ -70,7 +67,7 @@ async def end_consultation(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.get(  # type: ignore[misc]
+@router.get(
     "/{consultation_id}/video-token",
     response_model=VideoTokenResponse,
     summary="Refresh video token",
@@ -89,7 +86,7 @@ async def refresh_video_token(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(err)) from err
 
 
-@router.patch(  # type: ignore[misc]
+@router.patch(
     "/{consultation_id}/notes",
     response_model=ConsultationResponse,
     summary="Update consultation notes",
@@ -105,7 +102,7 @@ async def update_notes(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(err)) from err
 
 
-@router.patch(  # type: ignore[misc]
+@router.patch(
     "/{consultation_id}/summary",
     response_model=ConsultationResponse,
     summary="Update post-visit summary",

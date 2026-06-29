@@ -1,7 +1,6 @@
 from functools import lru_cache
-from typing import Optional
 
-from pydantic import Field
+from pydantic import Field, computed_field
 from pydantic_settings import BaseSettings
 
 
@@ -17,7 +16,19 @@ class Settings(BaseSettings):
     PORT: int = Field(default=8000)
 
     # ── Database ───────────────────────────────────────────────────────────────
-    DATABASE_URL: str = Field(default="postgresql://telehealth:telehealth@localhost:5432/telehealth")
+    PG_HOST: str = Field(default="localhost")
+    PG_PORT: int = Field(default=5432)
+    PG_USERNAME: str = Field(default="postgres")
+    PG_PASSWORD: str = Field(default="postgres")
+    PG_DATABASE: str = Field(default="patient_portal_dev")
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def database_url(self) -> str:
+        return (
+            f"postgresql+asyncpg://{self.PG_USERNAME}:{self.PG_PASSWORD}"
+            f"@{self.PG_HOST}:{self.PG_PORT}/{self.PG_DATABASE}"
+        )
 
     # ── Video Sessions ─────────────────────────────────────────────────────────
     # Secret used to sign video-session JWT tokens issued to patients/providers.
@@ -32,7 +43,7 @@ class Settings(BaseSettings):
     # ── API Gateway ────────────────────────────────────────────────────────────
     # Optional: displayed as a server entry in Swagger UI when set.
     # The gateway is responsible for validating auth JWT signatures.
-    GATEWAY_BASE_URL: Optional[str] = Field(default=None)
+    GATEWAY_BASE_URL: str | None = Field(default=None)
 
     # ── Tenant ─────────────────────────────────────────────────────────────────
     TENANT_NAME: str = Field(default="telehealth")

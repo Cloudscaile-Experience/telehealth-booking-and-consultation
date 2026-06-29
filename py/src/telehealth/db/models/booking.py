@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum as SAEnum, ForeignKey, String, Text, func
+from sqlalchemy import DateTime
+from sqlalchemy import Enum as SAEnum
+from sqlalchemy import ForeignKey, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -32,16 +34,12 @@ class Booking(Base):
     status: Mapped[BookingStatus] = mapped_column(
         SAEnum(BookingStatus, name="bookingstatus"), nullable=False, default=BookingStatus.PENDING
     )
-    patient_notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), nullable=False
-    )
+    patient_notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
     )
 
     provider: Mapped[Provider] = relationship("Provider", back_populates="bookings")
     slot: Mapped[AvailabilitySlot] = relationship("AvailabilitySlot", back_populates="booking")
-    consultation: Mapped[Optional[Consultation]] = relationship(
-        "Consultation", back_populates="booking", uselist=False
-    )
+    consultation: Mapped[Consultation | None] = relationship("Consultation", back_populates="booking", uselist=False)

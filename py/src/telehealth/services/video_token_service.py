@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from jose import JWTError, jwt
@@ -21,7 +21,7 @@ def generate_video_token(session_id: str, participant_id: str) -> VideoTokenResp
     The token encodes session_id, participant_id, expiry, and a 'type' claim
     so the video service can validate it independently.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     expires_at = now + timedelta(minutes=settings.VIDEO_SESSION_EXPIRY_MINUTES)
 
     payload: dict[str, Any] = {
