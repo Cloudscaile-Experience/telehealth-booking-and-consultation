@@ -1,3 +1,14 @@
+import {
+  type RawBooking,
+  type RawBookingDetail,
+  type RawPage,
+  serializeBookingParams,
+  serializeCreateBooking,
+  serializeUpdateBooking,
+  transformBooking,
+  transformBookingDetail,
+  transformPage
+} from '@/api/transforms';
 import { extensionManager } from '@/utils/extension';
 
 import type {
@@ -15,28 +26,36 @@ class BookingsApi {
   }
 
   async list(params: ListBookingsParams = {}): Promise<PaginatedResponse<Booking>> {
-    const { data } = await this.axios.get<PaginatedResponse<Booking>>('/v1/bookings', { params });
-    return data;
+    const { data } = await this.axios.get<RawPage<RawBooking>>('/v1/bookings', {
+      params: serializeBookingParams(params)
+    });
+    return transformPage(data, transformBooking);
   }
 
   async getById(id: string): Promise<BookingDetail> {
-    const { data } = await this.axios.get<BookingDetail>(`/v1/bookings/${id}`);
-    return data;
+    const { data } = await this.axios.get<RawBookingDetail>(`/v1/bookings/${id}`);
+    return transformBookingDetail(data);
   }
 
   async create(payload: CreateBookingPayload): Promise<Booking> {
-    const { data } = await this.axios.post<Booking>('/v1/bookings', payload);
-    return data;
+    const { data } = await this.axios.post<RawBooking>(
+      '/v1/bookings',
+      serializeCreateBooking(payload)
+    );
+    return transformBooking(data);
   }
 
   async update(id: string, payload: UpdateBookingPayload): Promise<Booking> {
-    const { data } = await this.axios.patch<Booking>(`/v1/bookings/${id}`, payload);
-    return data;
+    const { data } = await this.axios.patch<RawBooking>(
+      `/v1/bookings/${id}`,
+      serializeUpdateBooking(payload)
+    );
+    return transformBooking(data);
   }
 
   async confirm(id: string): Promise<Booking> {
-    const { data } = await this.axios.post<Booking>(`/v1/bookings/${id}/confirm`);
-    return data;
+    const { data } = await this.axios.post<RawBooking>(`/v1/bookings/${id}/confirm`);
+    return transformBooking(data);
   }
 }
 

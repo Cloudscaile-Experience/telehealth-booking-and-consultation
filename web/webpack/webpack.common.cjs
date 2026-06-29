@@ -47,7 +47,9 @@ module.exports = {
       filename: 'remoteEntry.js',
       exposes: {
         './TelehealthBooking': './src/containers/TelehealthContainer',
-        './ConsultationRoom': './src/containers/ConsultationRoomContainer'
+        './ConsultationRoom': './src/containers/ConsultationRoomContainer',
+        './ProviderManagement': './src/containers/ProviderManagementContainer',
+        './BookingDetail': './src/containers/BookingDetailContainer'
       },
       shared: {
         react: { singleton: true, requiredVersion: deps.react },

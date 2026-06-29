@@ -3,11 +3,17 @@
     "title": "Telehealth",
     "subtitle": "Book and manage virtual consultations",
 
+    "tabs": {
+      "directory": "Find a Provider",
+      "myAppointments": "My Appointments"
+    },
+
     "filters": {
-      "searchPlaceholder": "Search by name or specialty",
+      "searchPlaceholder": "Search by name or specialty...",
       "specialty": "Specialty",
       "allSpecialties": "All Specialties",
-      "language": "Language"
+      "language": "Language",
+      "clearFilters": "Clear filters"
     },
 
     "specialty": {
@@ -26,25 +32,54 @@
     },
 
     "directory": {
-      "loading": "Loading providers...",
       "emptyTitle": "No providers found",
       "emptyDescription": "Try adjusting your filters or search term.",
-      "resultCount": "{{count}} provider(s) found"
+      "resultCount_one": "{{count}} provider found",
+      "resultCount_other": "{{count}} providers found"
     },
 
     "card": {
       "book": "Book Appointment",
       "noRating": "No ratings yet",
-      "free": "Free"
+      "free": "Free",
+      "perSession": "/ session"
     },
 
     "booking": {
       "title": "Book an Appointment",
-      "selectSlot": "Select a time slot",
-      "noSlots": "No available slots for this provider.",
+      "selectDate": "Choose a Date",
+      "selectTime": "Choose a Time",
+      "noSlots": "No available slots for this provider at the moment.",
       "notesLabel": "Reason for visit (optional)",
       "notesPlaceholder": "Briefly describe your reason for the appointment...",
-      "confirm": "Book Appointment"
+      "confirm": "Confirm Booking",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "feeNotice": "Consultation fee"
+    },
+
+    "bookingStatus": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "cancelled": "Cancelled",
+      "completed": "Completed",
+      "no_show": "No Show"
+    },
+
+    "myBookings": {
+      "loading": "Loading your appointments...",
+      "emptyTitle": "No appointments yet",
+      "emptyDescription": "Browse providers and book your first virtual consultation.",
+      "browseProviders": "Browse Providers",
+      "joinSession": "Join Session",
+      "confirmBooking": "Confirm",
+      "cancelAppointment": "Cancel",
+      "cancelDialogTitle": "Cancel Appointment",
+      "cancelDialogMessage": "Are you sure you want to cancel this appointment? This action cannot be undone.",
+      "cancelDialogConfirm": "Yes, Cancel",
+      "bookedOn": "Booked",
+      "appointmentWith": "with",
+      "yourNotes": "Your notes"
     },
 
     "consultationStatus": {
@@ -56,23 +91,114 @@
 
     "room": {
       "title": "Consultation Room",
-      "sessionId": "Session ID",
+      "sessionId": "Session",
       "started": "Started",
       "ended": "Ended",
+      "duration": "Duration",
+      "videoSession": "Video Session",
+      "sessionReady": "Session ready — click Start to begin your consultation",
       "sessionActive": "Video session is active",
       "sessionInProgress": "Session in progress",
-      "tokenExpiresAt": "Token expires at",
+      "tokenExpiresAt": "Token expires",
+      "refreshToken": "Refresh Token",
       "startSession": "Start Consultation",
       "endSession": "End Consultation",
-      "patientNotes": "Notes",
+      "providerNotes": "Provider Notes",
+      "patientNotes": "Patient Notes",
       "notesPlaceholder": "Add notes during the consultation...",
+      "providerNotesPlaceholder": "Clinical observations, prescriptions...",
       "summary": "Post-Visit Summary",
-      "summaryPlaceholder": "Enter the post-visit summary..."
+      "summaryPlaceholder": "Enter the post-visit summary...",
+      "autoSaving": "Saving...",
+      "saved": "Saved"
+    },
+
+    "providerMgmt": {
+      "title": "Provider Management",
+      "subtitle": "Manage healthcare providers and their availability",
+      "addProvider": "Add Provider",
+      "loading": "Loading providers...",
+      "emptyTitle": "No providers yet",
+      "emptyDescription": "Add the first provider to get started.",
+      "deleteDialogTitle": "Delete Provider",
+      "deleteDialogMessage": "Are you sure you want to permanently delete this provider?",
+      "deleteDialogConfirm": "Delete",
+      "table": {
+        "provider": "Provider",
+        "specialty": "Specialty",
+        "fee": "Fee",
+        "rating": "Rating",
+        "status": "Status",
+        "actions": "Actions",
+        "noResults": "No providers found",
+        "noResultsHint": "Adjust your filters or add a new provider.",
+        "rowsPerPage": "Rows per page"
+      },
+      "statusLabel": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete",
+        "manageSlots": "Manage Slots",
+        "deactivate": "Deactivate",
+        "activate": "Activate"
+      },
+      "form": {
+        "createTitle": "Add Provider",
+        "editTitle": "Edit Provider",
+        "name": "Full Name",
+        "email": "Email Address",
+        "specialty": "Specialty",
+        "bio": "Bio",
+        "bioPlaceholder": "Brief background and expertise...",
+        "languages": "Languages",
+        "languagesHint": "Comma-separated, e.g. English, Spanish",
+        "fee": "Consultation Fee ($)",
+        "avatarUrl": "Avatar URL",
+        "save": "Save Provider",
+        "nameRequired": "Name is required",
+        "emailRequired": "Email is required",
+        "emailInvalid": "Must be a valid email",
+        "specialtyRequired": "Specialty is required",
+        "feeMin": "Fee cannot be negative",
+        "avatarInvalid": "Must be a valid URL"
+      },
+      "slots": {
+        "title": "Availability — {{name}}",
+        "addSlot": "Add Slot",
+        "noSlots": "No slots configured",
+        "noSlotsHint": "Add time windows when this provider is available.",
+        "startTime": "Start Time",
+        "endTime": "End Time",
+        "booked": "Booked",
+        "available": "Available",
+        "addDialogTitle": "Add Availability Slot",
+        "deleteSlotConfirm": "Remove this slot?"
+      }
+    },
+
+    "bookingDetail": {
+      "title": "Appointment Details",
+      "loading": "Loading appointment...",
+      "notFound": "Appointment not found.",
+      "appointmentTime": "Appointment Time",
+      "bookedOn": "Booked on",
+      "patientNotes": "Reason for Visit",
+      "confirmTitle": "Confirm Appointment",
+      "confirmMessage": "Confirming this appointment will notify the patient and create a consultation session.",
+      "confirmAction": "Confirm Appointment",
+      "cancelTitle": "Cancel Appointment",
+      "cancelMessage": "Are you sure you want to cancel this appointment?",
+      "cancelAction": "Yes, Cancel",
+      "joinSession": "Join Consultation Session"
     },
 
     "actions": {
       "save": "Save",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "close": "Close"
     },
 
     "errors": {

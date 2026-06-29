@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 
 import App from '@/App';
 import ConsultationRoom from '@/components/ConsultationRoom';
-import { LoadingSpinner } from '@/components/ui';
+import { LoadingSpinner, PageHeader } from '@/components/ui';
 import { useConsultation } from '@/hooks/useConsultations';
 import telehealthTranslations from '@/locales/telehealth.json';
 import { extensionManager } from '@/utils/extension';
@@ -21,8 +21,18 @@ const ConsultationRoomInner: React.FC<ConsultationRoomInnerProps> = ({
 }) => {
   const { data: consultation, isLoading } = useConsultation(consultationId);
 
-  if (isLoading) return <LoadingSpinner fullHeight label="Loading consultation..." />;
-  if (!consultation) return null;
+  if (isLoading) {
+    return <LoadingSpinner fullHeight label="Loading consultation..." />;
+  }
+
+  if (!consultation) {
+    return (
+      <PageHeader
+        title="Consultation not found"
+        subtitle="This session does not exist or you do not have access."
+      />
+    );
+  }
 
   return (
     <ConsultationRoom ns={ns} consultation={consultation} onEnded={onEnded ?? (() => undefined)} />

@@ -69,3 +69,11 @@ export const useUpdateSummary = () => {
     }
   });
 };
+
+export const useRefreshVideoToken = () =>
+  useMutation({
+    mutationFn: (id: string) => consultationsApi.refreshVideoToken(id),
+    onError: () => {
+      extensionManager.toast('Failed to refresh video token', 'error');
+    }
+  });

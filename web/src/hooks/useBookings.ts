@@ -69,3 +69,17 @@ export const useCancelBooking = () => {
     }
   });
 };
+
+export const useConfirmBooking = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => bookingsApi.confirm(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      extensionManager.toast('Appointment confirmed! Your consultation is ready.', 'success');
+    },
+    onError: () => {
+      extensionManager.toast('Failed to confirm appointment', 'error');
+    }
+  });
+};

@@ -19,6 +19,18 @@
         "description": "Telehealth consultation room module",
         "module": "./ConsultationRoom",
         "size": { "lg": 12, "md": 12, "sm": 12, "xs": 12 }
+      },
+      {
+        "name": "Provider Management",
+        "description": "Telehealth provider management module",
+        "module": "./ProviderManagement",
+        "size": { "lg": 12, "md": 12, "sm": 12, "xs": 12 }
+      },
+      {
+        "name": "Booking Detail",
+        "description": "Telehealth booking detail module",
+        "module": "./BookingDetail",
+        "size": { "lg": 12, "md": 12, "sm": 12, "xs": 12 }
       }
     ]
   },
