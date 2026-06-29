@@ -1,0 +1,30 @@
+{
+  "version": "0.0.1",
+  "tenant": "cloudscaile",
+  "extensionName": "telehealthBookingAndConsultation",
+  "description": "A system for the Telehealth Booking & Consultation extension — virtual consultation booking, video sessions, and post-visit summaries.",
+  "displayName": "Telehealth Booking & Consultation",
+  "web": {
+    "scope": "remote",
+    "remoteFileName": "remoteEntry.js",
+    "modules": [
+      {
+        "name": "Telehealth Booking",
+        "description": "Telehealth booking module",
+        "module": "./TelehealthBooking",
+        "size": { "lg": 12, "md": 12, "sm": 12, "xs": 12 }
+      },
+      {
+        "name": "Consultation Room",
+        "description": "Telehealth consultation room module",
+        "module": "./ConsultationRoom",
+        "size": { "lg": 12, "md": 12, "sm": 12, "xs": 12 }
+      }
+    ]
+  },
+  "backend": {
+    "py": {
+      "database": ["postgres"]
+    }
+  }
+}

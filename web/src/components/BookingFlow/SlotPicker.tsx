@@ -3,8 +3,8 @@ import { Box, Chip, Skeleton, Stack, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { useProviderSlots } from '@/hooks/useProviders';
-import { dateTimeView } from '@/utils/dateTime';
 import type { AvailabilitySlot } from '@/types/telehealth';
+import { dateTimeView } from '@/utils/dateTime';
 
 interface SlotPickerProps {
   ns: string;

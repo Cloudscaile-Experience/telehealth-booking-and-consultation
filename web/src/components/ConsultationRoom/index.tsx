@@ -20,8 +20,8 @@ import {
   useUpdateConsultationNotes,
   useUpdateSummary
 } from '@/hooks/useConsultations';
-import { dateTimeView } from '@/utils/dateTime';
 import type { Consultation, VideoToken } from '@/types/telehealth';
+import { dateTimeView } from '@/utils/dateTime';
 
 interface ConsultationRoomProps {
   ns: string;

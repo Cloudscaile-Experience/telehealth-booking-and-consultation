@@ -3,7 +3,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { bookingsApi } from '@/api/calls/bookings';
 import { extensionManager } from '@/utils/extension';
 
-import type { CreateBookingPayload, ListBookingsParams, UpdateBookingPayload } from '@/types/telehealth';
+import type {
+  CreateBookingPayload,
+  ListBookingsParams,
+  UpdateBookingPayload
+} from '@/types/telehealth';
 
 export const useBookings = (params: ListBookingsParams = {}) =>
   useQuery({
@@ -28,7 +32,10 @@ export const useCreateBooking = () => {
       extensionManager.toast('Appointment booked successfully', 'success');
     },
     onError: () => {
-      extensionManager.toast('Failed to book appointment. The slot may no longer be available.', 'error');
+      extensionManager.toast(
+        'Failed to book appointment. The slot may no longer be available.',
+        'error'
+      );
     }
   });
 };
@@ -51,8 +58,7 @@ export const useUpdateBooking = () => {
 export const useCancelBooking = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      bookingsApi.update(id, { status: 'cancelled' }),
+    mutationFn: (id: string) => bookingsApi.update(id, { status: 'cancelled' }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
       queryClient.invalidateQueries({ queryKey: ['providers'] });

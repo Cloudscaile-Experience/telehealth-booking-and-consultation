@@ -72,6 +72,38 @@ See `.agents/rules/micro-frontend-integration.md` for full details.
 - **`src/components/[Feature]/`** — feature components; may read context or accept props from a container.
 - **`src/containers/`** — smart components; wire API, store, contexts, and feature components together. These are the components the host mounts.
 
+Every container follows a three-layer pattern:
+
+```tsx
+// 1. Module-level — register translations once at import time
+const ns = extensionManager.getNsForTranslation('myFeature');
+extensionManager.registerTranslation(ns, translations);
+
+// 2. Inner component — owns hooks, local state, and business logic
+const MyFeatureInner: React.FC<InnerProps> = ({ id }) => {
+  const { data, isLoading } = useMyData(id);
+  if (isLoading) return <LoadingSpinner fullHeight label="Loading..." />;
+  if (!data) return null;
+  return <MyFeatureComponent ns={ns} data={data} />;
+};
+
+// 3. Container — wraps Inner with <App> (ThemeProvider + QueryClientProvider + ErrorBoundary)
+const MyFeatureContainer: React.FC<ContainerProps> = ({ id }) => (
+  <App>
+    <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
+      <MyFeatureInner id={id} />
+    </Suspense>
+  </App>
+);
+
+export default MyFeatureContainer;
+```
+
+Key rules:
+- Translation registration is **always at module scope** (outside any component), so it runs once when the module is first imported.
+- `<App>` is the only provider wrapper needed — never nest `ThemeProvider` or `QueryClientProvider` inside a container.
+- `ErrorBoundary` lives inside `<App>` — do not add a second one around the inner component.
+
 ### Naming Conventions
 
 | Item | Convention | Example |

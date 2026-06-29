@@ -45,7 +45,16 @@ const ProviderCard: React.FC<ProviderCardProps> = ({ ns, provider, onBook }) => 
           </Stack>
 
           {provider.bio && (
-            <Typography variant="body2" color="text.secondary" sx={{ WebkitLineClamp: 2, overflow: 'hidden', display: '-webkit-box', WebkitBoxOrient: 'vertical' }}>
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{
+                WebkitLineClamp: 2,
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitBoxOrient: 'vertical'
+              }}
+            >
               {provider.bio}
             </Typography>
           )}
