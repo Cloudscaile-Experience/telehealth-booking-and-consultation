@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -168,16 +169,25 @@ def create_app() -> FastAPI:
 
     app.openapi = _build_custom_openapi(app)  # type: ignore[method-assign]
 
-    # ── Compression ────────────────────────────────────────────────────────────
+    # ── CORS ──
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"] if not is_production else [],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    # ── Compression ──
     app.add_middleware(GZipMiddleware, minimum_size=1000)
 
-    # ── Global error handler ───────────────────────────────────────────────────
+    # ── Global error handler ──
     @app.exception_handler(Exception)
     async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
         logger.error("Unhandled exception", extra={"path": request.url.path, "error": str(exc)})
         return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
-    # ── Routers ────────────────────────────────────────────────────────────────
+    # ── Routers ──
     app.include_router(health.router, prefix="/open")
     app.include_router(providers.router, prefix="/v1/providers", tags=["providers"])
     app.include_router(availability.router, prefix="/v1", tags=["availability"])
