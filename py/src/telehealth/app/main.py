@@ -3,7 +3,6 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.openapi.utils import get_openapi
 from fastapi.responses import JSONResponse
@@ -168,15 +167,6 @@ def create_app() -> FastAPI:
     )
 
     app.openapi = _build_custom_openapi(app)  # type: ignore[method-assign]
-
-    # ── CORS ───────────────────────────────────────────────────────────────────
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS.split(","),
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
 
     # ── Compression ────────────────────────────────────────────────────────────
     app.add_middleware(GZipMiddleware, minimum_size=1000)

@@ -37,9 +37,6 @@ class Settings(BaseSettings):
     # Algorithm for signing video session tokens (HS256 is sufficient for internal use)
     JWT_ALGORITHM: str = Field(default="HS256")
 
-    # ── CORS ───────────────────────────────────────────────────────────────────
-    CORS_ORIGINS: str = Field(default="http://localhost:3000,http://localhost:4000,http://localhost:5173")
-
     # ── API Gateway ────────────────────────────────────────────────────────────
     # Optional: displayed as a server entry in Swagger UI when set.
     # The gateway is responsible for validating auth JWT signatures.
