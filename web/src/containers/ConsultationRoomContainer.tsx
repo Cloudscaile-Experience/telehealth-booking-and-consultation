@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { useNavigate } from 'react-router';
 
 import App from '@/App';
 import ConsultationRoom from '@/components/ConsultationRoom';
@@ -10,15 +11,18 @@ import { extensionManager } from '@/utils/extension';
 const ns = extensionManager.getNsForTranslation('telehealth');
 extensionManager.registerTranslation(ns, telehealthTranslations);
 
+const DEFAULT_BACK_ROUTE = '/telehealth';
+
 interface ConsultationRoomInnerProps {
   consultationId: string;
-  onEnded?: () => void;
+  backRoute: string;
 }
 
 const ConsultationRoomInner: React.FC<ConsultationRoomInnerProps> = ({
   consultationId,
-  onEnded
+  backRoute
 }) => {
+  const navigate = useNavigate();
   const { data: consultation, isLoading } = useConsultation(consultationId);
 
   if (isLoading) {
@@ -35,22 +39,22 @@ const ConsultationRoomInner: React.FC<ConsultationRoomInnerProps> = ({
   }
 
   return (
-    <ConsultationRoom ns={ns} consultation={consultation} onEnded={onEnded ?? (() => undefined)} />
+    <ConsultationRoom ns={ns} consultation={consultation} onEnded={() => navigate(backRoute)} />
   );
 };
 
-interface ConsultationRoomContainerProps {
+export interface ConsultationRoomContainerProps {
   consultationId: string;
-  onEnded?: () => void;
+  backRoute?: string;
 }
 
 const ConsultationRoomContainer: React.FC<ConsultationRoomContainerProps> = ({
   consultationId,
-  onEnded
+  backRoute = DEFAULT_BACK_ROUTE
 }) => (
   <App>
     <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <ConsultationRoomInner consultationId={consultationId} onEnded={onEnded} />
+      <ConsultationRoomInner consultationId={consultationId} backRoute={backRoute} />
     </Suspense>
   </App>
 );

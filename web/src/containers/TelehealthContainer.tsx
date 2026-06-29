@@ -1,6 +1,7 @@
 import { Box, Divider, Tab, Tabs } from '@mui/material';
 import { Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 import App from '@/App';
 import BookingFlow from '@/components/BookingFlow';
@@ -14,22 +15,23 @@ import { extensionManager } from '@/utils/extension';
 const ns = extensionManager.getNsForTranslation('telehealth');
 extensionManager.registerTranslation(ns, telehealthTranslations);
 
+const DEFAULT_CONSULTATION_BASE_PATH = '/telehealth/consultation';
+
 interface TelehealthInnerProps {
-  onJoinSession?: (bookingId: string) => void;
+  consultationBasePath: string;
 }
 
-const TelehealthInner: React.FC<TelehealthInnerProps> = ({ onJoinSession }) => {
+const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath }) => {
   const { t } = useTranslation(ns);
+  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [bookingProvider, setBookingProvider] = useState<Provider | null>(null);
 
-  const handleBook = (provider: Provider) => {
-    setBookingProvider(provider);
+  const handleJoinSession = (bookingId: string) => {
+    navigate(`${consultationBasePath}/${bookingId}`);
   };
 
-  const handleBrowseProviders = () => {
-    setTab(0);
-  };
+  const handleBrowseProviders = () => setTab(0);
 
   return (
     <>
@@ -44,12 +46,12 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ onJoinSession }) => {
 
       <Divider />
 
-      {tab === 0 && <ProviderDirectory ns={ns} onBook={handleBook} />}
+      {tab === 0 && <ProviderDirectory ns={ns} onBook={setBookingProvider} />}
       {tab === 1 && (
         <MyBookings
           ns={ns}
           onBrowseProviders={handleBrowseProviders}
-          onJoinSession={onJoinSession}
+          onJoinSession={handleJoinSession}
         />
       )}
 
@@ -58,14 +60,16 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ onJoinSession }) => {
   );
 };
 
-interface TelehealthContainerProps {
-  onJoinSession?: (bookingId: string) => void;
+export interface TelehealthContainerProps {
+  consultationBasePath?: string;
 }
 
-const TelehealthContainer: React.FC<TelehealthContainerProps> = ({ onJoinSession }) => (
+const TelehealthContainer: React.FC<TelehealthContainerProps> = ({
+  consultationBasePath = DEFAULT_CONSULTATION_BASE_PATH
+}) => (
   <App>
     <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <TelehealthInner onJoinSession={onJoinSession} />
+      <TelehealthInner consultationBasePath={consultationBasePath} />
     </Suspense>
   </App>
 );

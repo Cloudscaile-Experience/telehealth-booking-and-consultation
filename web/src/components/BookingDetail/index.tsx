@@ -1,3 +1,4 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import EventIcon from '@mui/icons-material/Event';
@@ -44,9 +45,15 @@ interface BookingDetailViewProps {
   ns: string;
   booking: BookingDetail;
   onJoinSession?: (bookingId: string) => void;
+  onBack?: () => void;
 }
 
-const BookingDetailView: React.FC<BookingDetailViewProps> = ({ ns, booking, onJoinSession }) => {
+const BookingDetailView: React.FC<BookingDetailViewProps> = ({
+  ns,
+  booking,
+  onJoinSession,
+  onBack
+}) => {
   const { t } = useTranslation(ns);
   const { data: provider } = useProvider(booking.providerId);
 
@@ -77,6 +84,21 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({ ns, booking, onJo
   return (
     <>
       <Stack spacing={3}>
+        {/* Back navigation */}
+        {onBack && (
+          <Box>
+            <Button
+              startIcon={<ArrowBackIcon />}
+              onClick={onBack}
+              color="inherit"
+              size="small"
+              sx={{ ml: -0.5 }}
+            >
+              Back
+            </Button>
+          </Box>
+        )}
+
         {/* Status banner */}
         {booking.status === 'confirmed' && (
           <Alert severity="success" icon={<CheckCircleOutlineIcon fontSize="small" />}>

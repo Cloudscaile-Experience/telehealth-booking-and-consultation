@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { useNavigate } from 'react-router';
 
 import App from '@/App';
 import BookingDetailView from '@/components/BookingDetail';
@@ -11,12 +12,21 @@ import { extensionManager } from '@/utils/extension';
 const ns = extensionManager.getNsForTranslation('telehealth');
 extensionManager.registerTranslation(ns, telehealthTranslations);
 
+const DEFAULT_CONSULTATION_BASE_PATH = '/telehealth/consultation';
+const DEFAULT_BACK_ROUTE = '/telehealth';
+
 interface BookingDetailInnerProps {
   bookingId: string;
-  onJoinSession?: (bookingId: string) => void;
+  consultationBasePath: string;
+  backRoute: string;
 }
 
-const BookingDetailInner: React.FC<BookingDetailInnerProps> = ({ bookingId, onJoinSession }) => {
+const BookingDetailInner: React.FC<BookingDetailInnerProps> = ({
+  bookingId,
+  consultationBasePath,
+  backRoute
+}) => {
+  const navigate = useNavigate();
   const { data: booking, isLoading } = useBooking(bookingId);
 
   if (isLoading) {
@@ -33,22 +43,33 @@ const BookingDetailInner: React.FC<BookingDetailInnerProps> = ({ bookingId, onJo
   }
 
   return (
-    <BookingDetailView ns={ns} booking={booking as BookingDetail} onJoinSession={onJoinSession} />
+    <BookingDetailView
+      ns={ns}
+      booking={booking as BookingDetail}
+      onJoinSession={(id) => navigate(`${consultationBasePath}/${id}`)}
+      onBack={() => navigate(backRoute)}
+    />
   );
 };
 
-interface BookingDetailContainerProps {
+export interface BookingDetailContainerProps {
   bookingId: string;
-  onJoinSession?: (bookingId: string) => void;
+  consultationBasePath?: string;
+  backRoute?: string;
 }
 
 const BookingDetailContainer: React.FC<BookingDetailContainerProps> = ({
   bookingId,
-  onJoinSession
+  consultationBasePath = DEFAULT_CONSULTATION_BASE_PATH,
+  backRoute = DEFAULT_BACK_ROUTE
 }) => (
   <App>
     <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <BookingDetailInner bookingId={bookingId} onJoinSession={onJoinSession} />
+      <BookingDetailInner
+        bookingId={bookingId}
+        consultationBasePath={consultationBasePath}
+        backRoute={backRoute}
+      />
     </Suspense>
   </App>
 );
