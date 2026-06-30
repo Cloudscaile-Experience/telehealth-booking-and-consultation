@@ -16,12 +16,17 @@ const ns = extensionManager.getNsForTranslation('telehealth');
 extensionManager.registerTranslation(ns, telehealthTranslations);
 
 const DEFAULT_CONSULTATION_BASE_PATH = '/telehealth/consultation';
+const DEFAULT_BOOKING_BASE_PATH = '/telehealth/booking';
 
 interface TelehealthInnerProps {
   consultationBasePath: string;
+  bookingBasePath: string;
 }
 
-const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath }) => {
+const TelehealthInner: React.FC<TelehealthInnerProps> = ({
+  consultationBasePath,
+  bookingBasePath
+}) => {
   const { t } = useTranslation(ns);
   const navigate = useNavigate();
   const [tab, setTab] = useState(0);
@@ -29,6 +34,10 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath 
 
   const handleJoinSession = (consultationId: string) => {
     navigate(`${consultationBasePath}/${consultationId}`);
+  };
+
+  const handleViewDetail = (bookingId: string) => {
+    navigate(`${bookingBasePath}/${bookingId}`);
   };
 
   const handleBrowseProviders = () => setTab(0);
@@ -52,6 +61,7 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath 
           ns={ns}
           onBrowseProviders={handleBrowseProviders}
           onJoinSession={handleJoinSession}
+          onViewDetail={handleViewDetail}
         />
       )}
 
@@ -62,14 +72,19 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath 
 
 export interface TelehealthContainerProps {
   consultationBasePath?: string;
+  bookingBasePath?: string;
 }
 
 const TelehealthContainer: React.FC<TelehealthContainerProps> = ({
-  consultationBasePath = DEFAULT_CONSULTATION_BASE_PATH
+  consultationBasePath = DEFAULT_CONSULTATION_BASE_PATH,
+  bookingBasePath = DEFAULT_BOOKING_BASE_PATH
 }) => (
   <App>
     <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <TelehealthInner consultationBasePath={consultationBasePath} />
+      <TelehealthInner
+        consultationBasePath={consultationBasePath}
+        bookingBasePath={bookingBasePath}
+      />
     </Suspense>
   </App>
 );

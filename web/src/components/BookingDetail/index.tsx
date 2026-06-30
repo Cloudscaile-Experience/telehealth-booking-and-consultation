@@ -1,9 +1,9 @@
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import EventIcon from '@mui/icons-material/Event';
-import PersonIcon from '@mui/icons-material/Person';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
+import NotesIcon from '@mui/icons-material/Notes';
+import VideocamIcon from '@mui/icons-material/Videocam';
 import {
   Alert,
   Avatar,
@@ -33,7 +33,10 @@ import { getAvatarColor, getInitials } from '@/utils/helpers';
 
 dayjs.extend(utc);
 
-const STATUS_COLOR: Record<BookingStatus, 'warning' | 'success' | 'error' | 'default' | 'info'> = {
+const STATUS_CHIP_COLOR: Record<
+  BookingStatus,
+  'warning' | 'success' | 'error' | 'default' | 'info'
+> = {
   pending: 'warning',
   confirmed: 'success',
   cancelled: 'error',
@@ -44,7 +47,7 @@ const STATUS_COLOR: Record<BookingStatus, 'warning' | 'success' | 'error' | 'def
 interface BookingDetailViewProps {
   ns: string;
   booking: BookingDetail;
-  onJoinSession?: (bookingId: string) => void;
+  onJoinSession?: (consultationId: string) => void;
   onBack?: () => void;
 }
 
@@ -58,7 +61,6 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
   const { data: provider } = useProvider(booking.providerId);
 
   const [confirmDialog, setConfirmDialog] = useState<'confirm' | 'cancel' | null>(null);
-
   const confirmBooking = useConfirmBooking();
   const cancelBooking = useCancelBooking();
 
@@ -84,8 +86,8 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
 
   return (
     <>
-      <Stack spacing={3}>
-        {/* Back navigation */}
+      <Stack spacing={3} sx={{ maxWidth: 640, mx: 'auto', px: 3, py: 2 }}>
+        {/* Back */}
         {onBack && (
           <Box>
             <Button
@@ -93,49 +95,55 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
               onClick={onBack}
               color="inherit"
               size="small"
-              sx={{ ml: -0.5 }}
+              sx={{ ml: -0.5, fontWeight: 500 }}
             >
-              Back
+              {t('tabs.myAppointments')}
             </Button>
           </Box>
         )}
 
-        {/* Status banner */}
+        {/* Status alert */}
+        {booking.status === 'pending' && (
+          <Alert severity="warning" sx={{ borderRadius: 2 }}>
+            Awaiting confirmation from the provider.
+          </Alert>
+        )}
         {booking.status === 'confirmed' && (
-          <Alert severity="success" icon={<CheckCircleOutlineIcon fontSize="small" />}>
+          <Alert
+            severity="success"
+            icon={<CheckCircleOutlineIcon fontSize="small" />}
+            sx={{ borderRadius: 2 }}
+          >
             This appointment is confirmed.
           </Alert>
         )}
         {booking.status === 'cancelled' && (
-          <Alert severity="error">This appointment has been cancelled.</Alert>
+          <Alert severity="error" sx={{ borderRadius: 2 }}>
+            This appointment has been cancelled.
+          </Alert>
         )}
 
-        {/* Provider card */}
+        {/* Provider hero */}
         <Paper
           variant="outlined"
-          sx={{
-            p: 2.5,
-            borderRadius: 3,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2
-          }}
+          sx={{ p: 2.5, borderRadius: 3, display: 'flex', alignItems: 'center', gap: 2.5 }}
         >
           <Avatar
             src={provider?.avatarUrl ?? undefined}
             sx={{
-              width: 56,
-              height: 56,
+              width: 64,
+              height: 64,
               bgcolor: getAvatarColor(displayName),
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: 700,
               flexShrink: 0
             }}
           >
             {getInitials(displayName)}
           </Avatar>
+
           <Box sx={{ flex: 1, minWidth: 0 }}>
-            <Typography variant="subtitle1" fontWeight={700} noWrap>
+            <Typography variant="h6" fontWeight={700} noWrap>
               {displayName}
             </Typography>
             {provider?.specialty && (
@@ -144,33 +152,53 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
                 size="small"
                 color="primary"
                 variant="outlined"
-                sx={{ mt: 0.5, fontSize: 11, height: 20 }}
+                sx={{ mt: 0.5, fontSize: 11, height: 22 }}
               />
             )}
           </Box>
+
           <Chip
             label={t(`bookingStatus.${booking.status}`)}
-            color={STATUS_COLOR[booking.status]}
-            variant="outlined"
+            color={STATUS_CHIP_COLOR[booking.status]}
+            variant="filled"
             sx={{ fontWeight: 600, flexShrink: 0 }}
           />
         </Paper>
 
-        {/* Appointment time */}
-        <Stack spacing={0.75}>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            fontWeight={600}
-            textTransform="uppercase"
-            letterSpacing={0.5}
-          >
-            {t('bookingDetail.appointmentTime')}
-          </Typography>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <EventIcon color="action" />
+        {/* Appointment time block */}
+        <Paper
+          variant="outlined"
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+            borderLeft: '4px solid',
+            borderLeftColor: 'primary.main'
+          }}
+        >
+          <Stack direction="row" alignItems="center" spacing={2} sx={{ p: 2.5 }}>
+            <Box
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: 2,
+                bgcolor: 'primary.main',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <CalendarMonthIcon sx={{ color: 'primary.contrastText', fontSize: 24 }} />
+            </Box>
             <Box>
-              <Typography variant="body1" fontWeight={600}>
+              <Typography
+                variant="overline"
+                color="text.secondary"
+                sx={{ lineHeight: 1.2, display: 'block' }}
+              >
+                {t('bookingDetail.appointmentTime')}
+              </Typography>
+              <Typography variant="subtitle1" fontWeight={700}>
                 {slotStart.format('dddd, MMMM D, YYYY')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
@@ -178,62 +206,29 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
               </Typography>
             </Box>
           </Stack>
-        </Stack>
+        </Paper>
 
-        <Divider />
-
-        {/* Patient info */}
-        <Stack spacing={0.75}>
-          <Typography
-            variant="caption"
-            color="text.secondary"
-            fontWeight={600}
-            textTransform="uppercase"
-            letterSpacing={0.5}
-          >
-            Patient
-          </Typography>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <PersonIcon color="action" />
-            <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-              {booking.patientId}
-            </Typography>
-          </Stack>
-        </Stack>
-
-        {/* Patient notes */}
+        {/* Reason for visit */}
         {booking.patientNotes && (
-          <Box
-            sx={{
-              p: 2,
-              borderRadius: 2,
-              bgcolor: 'background.default',
-              border: 1,
-              borderColor: 'divider'
-            }}
-          >
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              fontWeight={600}
-              textTransform="uppercase"
-              letterSpacing={0.5}
-            >
-              {t('bookingDetail.patientNotes')}
-            </Typography>
-            <Typography variant="body2" sx={{ mt: 0.5 }}>
-              {booking.patientNotes}
-            </Typography>
-          </Box>
+          <Paper variant="outlined" sx={{ p: 2.5, borderRadius: 3 }}>
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+              <NotesIcon fontSize="small" color="action" />
+              <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1 }}>
+                {t('bookingDetail.patientNotes')}
+              </Typography>
+            </Stack>
+            <Typography variant="body2">{booking.patientNotes}</Typography>
+          </Paper>
         )}
 
-        <Typography variant="caption" color="text.disabled">
+        {/* Booked on */}
+        <Typography variant="caption" color="text.disabled" sx={{ display: 'block' }}>
           {t('bookingDetail.bookedOn')}{' '}
           {dayjs.utc(booking.createdAt).local().format('MMM D, YYYY [at] h:mm A')}
         </Typography>
 
         {/* Actions */}
-        {(canConfirm || canCancel || canJoin) && (
+        {(canJoin || canConfirm || canCancel) && (
           <>
             <Divider />
             <Stack direction="row" spacing={1.5} flexWrap="wrap">
@@ -241,9 +236,9 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
                 <Button
                   variant="contained"
                   color="success"
-                  startIcon={<VideoCallIcon />}
+                  startIcon={<VideocamIcon />}
                   onClick={() => booking.consultationId && onJoinSession?.(booking.consultationId)}
-                  sx={{ borderRadius: 2 }}
+                  sx={{ flexGrow: 1 }}
                 >
                   {t('bookingDetail.joinSession')}
                 </Button>
@@ -253,7 +248,7 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
                   variant="contained"
                   startIcon={<CheckCircleOutlineIcon />}
                   onClick={() => setConfirmDialog('confirm')}
-                  sx={{ borderRadius: 2 }}
+                  sx={{ flexGrow: 1 }}
                 >
                   {t('bookingDetail.confirmAction')}
                 </Button>
@@ -264,7 +259,7 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
                   color="error"
                   startIcon={<CancelOutlinedIcon />}
                   onClick={() => setConfirmDialog('cancel')}
-                  sx={{ borderRadius: 2 }}
+                  sx={{ flexGrow: 1 }}
                 >
                   {t('myBookings.cancelAppointment')}
                 </Button>
@@ -280,13 +275,16 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
         onClose={() => setConfirmDialog(null)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle fontWeight={600}>{t('bookingDetail.confirmTitle')}</DialogTitle>
+        <DialogTitle fontWeight={700} sx={{ pb: 1 }}>
+          {t('bookingDetail.confirmTitle')}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>{t('bookingDetail.confirmMessage')}</DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmDialog(null)} color="inherit">
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button onClick={() => setConfirmDialog(null)} color="inherit" sx={{ flex: 1 }}>
             {t('actions.cancel')}
           </Button>
           <Button
@@ -296,7 +294,7 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
             startIcon={
               confirmBooking.isPending ? <CircularProgress size={16} color="inherit" /> : undefined
             }
-            sx={{ borderRadius: 2 }}
+            sx={{ flex: 1 }}
           >
             {t('bookingDetail.confirmAction')}
           </Button>
@@ -309,13 +307,16 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
         onClose={() => setConfirmDialog(null)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle fontWeight={600}>{t('bookingDetail.cancelTitle')}</DialogTitle>
+        <DialogTitle fontWeight={700} sx={{ pb: 1 }}>
+          {t('bookingDetail.cancelTitle')}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>{t('bookingDetail.cancelMessage')}</DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setConfirmDialog(null)} color="inherit">
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button onClick={() => setConfirmDialog(null)} color="inherit" sx={{ flex: 1 }}>
             {t('actions.cancel')}
           </Button>
           <Button
@@ -323,7 +324,7 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
             color="error"
             onClick={handleCancel}
             disabled={cancelBooking.isPending}
-            sx={{ borderRadius: 2 }}
+            sx={{ flex: 1 }}
           >
             {t('bookingDetail.cancelAction')}
           </Button>

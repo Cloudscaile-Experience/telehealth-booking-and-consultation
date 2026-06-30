@@ -11,7 +11,8 @@ import {
   DialogTitle,
   Pagination,
   Skeleton,
-  Stack
+  Stack,
+  Typography
 } from '@mui/material';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -25,6 +26,29 @@ import BookingCard from './BookingCard';
 
 const PAGE_SIZE = 10;
 
+const BookingCardSkeleton: React.FC = () => (
+  <Card
+    variant="outlined"
+    sx={{ borderLeftWidth: 4, borderLeftStyle: 'solid', borderLeftColor: 'divider' }}
+  >
+    <CardContent sx={{ p: 0, '&:last-child': { pb: 0 } }}>
+      <Stack direction="row" spacing={2} sx={{ p: 2.5 }}>
+        <Skeleton variant="circular" width={52} height={52} sx={{ flexShrink: 0 }} />
+        <Box sx={{ flex: 1 }}>
+          <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+            <Box>
+              <Skeleton variant="text" width={180} height={22} />
+              <Skeleton variant="text" width={110} height={16} sx={{ mt: 0.25 }} />
+            </Box>
+            <Skeleton variant="rounded" width={76} height={22} sx={{ borderRadius: 10 }} />
+          </Stack>
+          <Skeleton variant="rounded" width={220} height={26} sx={{ mt: 1.5, borderRadius: 10 }} />
+        </Box>
+      </Stack>
+    </CardContent>
+  </Card>
+);
+
 interface BookingDetailLoaderProps {
   bookingId: string;
   providerId: string;
@@ -32,6 +56,7 @@ interface BookingDetailLoaderProps {
   onCancel: (id: string) => void;
   onConfirm: (id: string) => void;
   onJoin?: (id: string) => void;
+  onViewDetail?: (id: string) => void;
 }
 
 const BookingDetailLoader: React.FC<BookingDetailLoaderProps> = ({
@@ -40,30 +65,13 @@ const BookingDetailLoader: React.FC<BookingDetailLoaderProps> = ({
   ns,
   onCancel,
   onConfirm,
-  onJoin
+  onJoin,
+  onViewDetail
 }) => {
   const { data: booking } = useBooking(bookingId);
   const { data: provider } = useProvider(providerId);
 
-  if (!booking) {
-    return (
-      <Card variant="outlined" sx={{ borderRadius: 3 }}>
-        <CardContent sx={{ p: 2.5 }}>
-          <Stack spacing={2}>
-            <Stack direction="row" spacing={1.5} alignItems="center">
-              <Skeleton variant="circular" width={44} height={44} />
-              <Stack sx={{ flex: 1 }}>
-                <Skeleton variant="text" width={200} />
-                <Skeleton variant="text" width={130} />
-              </Stack>
-              <Skeleton variant="rounded" width={80} height={22} sx={{ borderRadius: 10 }} />
-            </Stack>
-            <Skeleton variant="text" width="60%" />
-          </Stack>
-        </CardContent>
-      </Card>
-    );
-  }
+  if (!booking) return <BookingCardSkeleton />;
 
   return (
     <BookingCard
@@ -73,6 +81,7 @@ const BookingDetailLoader: React.FC<BookingDetailLoaderProps> = ({
       onCancel={onCancel}
       onConfirm={onConfirm}
       onJoin={onJoin}
+      onViewDetail={onViewDetail}
     />
   );
 };
@@ -81,9 +90,15 @@ interface MyBookingsProps {
   ns: string;
   onBrowseProviders: () => void;
   onJoinSession?: (bookingId: string) => void;
+  onViewDetail?: (bookingId: string) => void;
 }
 
-const MyBookings: React.FC<MyBookingsProps> = ({ ns, onBrowseProviders, onJoinSession }) => {
+const MyBookings: React.FC<MyBookingsProps> = ({
+  ns,
+  onBrowseProviders,
+  onJoinSession,
+  onViewDetail
+}) => {
   const { t } = useTranslation(ns);
   const [page, setPage] = useState(1);
   const [cancelTargetId, setCancelTargetId] = useState<string | null>(null);
@@ -118,18 +133,29 @@ const MyBookings: React.FC<MyBookingsProps> = ({ ns, onBrowseProviders, onJoinSe
 
   return (
     <>
-      <Stack spacing={2.5} sx={{ p: 3 }}>
-        {data.data.map((booking) => (
-          <BookingDetailLoader
-            key={booking.id}
-            bookingId={booking.id}
-            providerId={booking.providerId}
-            ns={ns}
-            onCancel={setCancelTargetId}
-            onConfirm={(id) => confirmBooking.mutate(id)}
-            onJoin={onJoinSession}
-          />
-        ))}
+      <Stack spacing={2} sx={{ p: 3 }}>
+        {/* Count header */}
+        <Stack direction="row" alignItems="center" justifyContent="space-between">
+          <Typography variant="body2" color="text.secondary" fontWeight={500}>
+            {data.total} {data.total === 1 ? 'appointment' : 'appointments'}
+          </Typography>
+        </Stack>
+
+        {/* Booking cards */}
+        <Stack spacing={2}>
+          {data.data.map((booking) => (
+            <BookingDetailLoader
+              key={booking.id}
+              bookingId={booking.id}
+              providerId={booking.providerId}
+              ns={ns}
+              onCancel={setCancelTargetId}
+              onConfirm={(id) => confirmBooking.mutate(id)}
+              onJoin={onJoinSession}
+              onViewDetail={onViewDetail}
+            />
+          ))}
+        </Stack>
 
         {totalPages > 1 && (
           <Box sx={{ display: 'flex', justifyContent: 'center', pt: 1 }}>
@@ -144,19 +170,21 @@ const MyBookings: React.FC<MyBookingsProps> = ({ ns, onBrowseProviders, onJoinSe
         )}
       </Stack>
 
-      {/* Cancel confirmation dialog */}
       <Dialog
         open={Boolean(cancelTargetId)}
         onClose={() => setCancelTargetId(null)}
         maxWidth="xs"
         fullWidth
+        PaperProps={{ sx: { borderRadius: 3 } }}
       >
-        <DialogTitle fontWeight={600}>{t('myBookings.cancelDialogTitle')}</DialogTitle>
+        <DialogTitle fontWeight={700} sx={{ pb: 1 }}>
+          {t('myBookings.cancelDialogTitle')}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>{t('myBookings.cancelDialogMessage')}</DialogContentText>
         </DialogContent>
-        <DialogActions sx={{ px: 3, pb: 2 }}>
-          <Button onClick={() => setCancelTargetId(null)} color="inherit">
+        <DialogActions sx={{ px: 3, pb: 2.5, gap: 1 }}>
+          <Button onClick={() => setCancelTargetId(null)} color="inherit" sx={{ flex: 1 }}>
             {t('actions.cancel')}
           </Button>
           <Button
@@ -164,7 +192,7 @@ const MyBookings: React.FC<MyBookingsProps> = ({ ns, onBrowseProviders, onJoinSe
             color="error"
             onClick={handleCancelConfirm}
             disabled={cancelBooking.isPending}
-            sx={{ borderRadius: 2 }}
+            sx={{ flex: 1 }}
           >
             {t('myBookings.cancelDialogConfirm')}
           </Button>
