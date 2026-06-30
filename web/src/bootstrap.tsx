@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
-import TelehealthContainer from '@/containers/TelehealthContainer';
+import App from '@/App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -10,6 +10,6 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <TelehealthContainer />
+    <App />
   </StrictMode>
 );
