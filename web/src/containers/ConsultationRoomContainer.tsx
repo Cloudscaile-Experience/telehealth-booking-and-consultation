@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import App from '@/App';
 import ConsultationRoom from '@/components/ConsultationRoom';
@@ -44,19 +44,24 @@ const ConsultationRoomInner: React.FC<ConsultationRoomInnerProps> = ({
 };
 
 export interface ConsultationRoomContainerProps {
-  consultationId: string;
+  consultationId?: string;
   backRoute?: string;
 }
 
 const ConsultationRoomContainer: React.FC<ConsultationRoomContainerProps> = ({
-  consultationId,
+  consultationId: consultationIdProp,
   backRoute = DEFAULT_BACK_ROUTE
-}) => (
-  <App>
-    <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <ConsultationRoomInner consultationId={consultationId} backRoute={backRoute} />
-    </Suspense>
-  </App>
-);
+}) => {
+  const params = useParams<{ consultationId: string }>();
+  const resolvedConsultationId = consultationIdProp ?? params.consultationId ?? '';
+
+  return (
+    <App>
+      <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
+        <ConsultationRoomInner consultationId={resolvedConsultationId} backRoute={backRoute} />
+      </Suspense>
+    </App>
+  );
+};
 
 export default ConsultationRoomContainer;

@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import App from '@/App';
 import BookingDetailView from '@/components/BookingDetail';
@@ -53,25 +53,30 @@ const BookingDetailInner: React.FC<BookingDetailInnerProps> = ({
 };
 
 export interface BookingDetailContainerProps {
-  bookingId: string;
+  bookingId?: string;
   consultationBasePath?: string;
   backRoute?: string;
 }
 
 const BookingDetailContainer: React.FC<BookingDetailContainerProps> = ({
-  bookingId,
+  bookingId: bookingIdProp,
   consultationBasePath = DEFAULT_CONSULTATION_BASE_PATH,
   backRoute = DEFAULT_BACK_ROUTE
-}) => (
-  <App>
-    <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
-      <BookingDetailInner
-        bookingId={bookingId}
-        consultationBasePath={consultationBasePath}
-        backRoute={backRoute}
-      />
-    </Suspense>
-  </App>
-);
+}) => {
+  const params = useParams<{ bookingId: string }>();
+  const resolvedBookingId = bookingIdProp ?? params.bookingId ?? '';
+
+  return (
+    <App>
+      <Suspense fallback={<LoadingSpinner fullHeight label="Loading..." />}>
+        <BookingDetailInner
+          bookingId={resolvedBookingId}
+          consultationBasePath={consultationBasePath}
+          backRoute={backRoute}
+        />
+      </Suspense>
+    </App>
+  );
+};
 
 export default BookingDetailContainer;
