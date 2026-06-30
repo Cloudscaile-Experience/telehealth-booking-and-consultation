@@ -27,8 +27,8 @@ const TelehealthInner: React.FC<TelehealthInnerProps> = ({ consultationBasePath 
   const [tab, setTab] = useState(0);
   const [bookingProvider, setBookingProvider] = useState<Provider | null>(null);
 
-  const handleJoinSession = (bookingId: string) => {
-    navigate(`${consultationBasePath}/${bookingId}`);
+  const handleJoinSession = (consultationId: string) => {
+    navigate(`${consultationBasePath}/${consultationId}`);
   };
 
   const handleBrowseProviders = () => setTab(0);

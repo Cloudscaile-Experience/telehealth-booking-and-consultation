@@ -33,6 +33,7 @@ class BookingResponse(BaseModel):
 
 class BookingDetailResponse(BookingResponse):
     slot: AvailabilitySlotResponse
+    consultation_id: uuid.UUID | None = None
 
 
 class ListBookingsQuery(BaseModel):

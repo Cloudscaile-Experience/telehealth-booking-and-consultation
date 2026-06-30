@@ -45,7 +45,8 @@ const BookingCard: React.FC<BookingCardProps> = ({
 
   const canCancel = booking.status === 'pending' || booking.status === 'confirmed';
   const canConfirm = booking.status === 'pending' && Boolean(onConfirm);
-  const canJoin = booking.status === 'confirmed' && Boolean(onJoin);
+  const canJoin =
+    booking.status === 'confirmed' && Boolean(onJoin) && Boolean(booking.consultationId);
 
   return (
     <Card
@@ -145,7 +146,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                   variant="outlined"
                   color="primary"
                   startIcon={<CheckCircleOutlineIcon />}
-                  onClick={() => onConfirm!(booking.id)}
+                  onClick={() => onConfirm?.(booking.id)}
                   sx={{ borderRadius: 2 }}
                 >
                   {t('myBookings.confirmBooking')}
@@ -157,7 +158,7 @@ const BookingCard: React.FC<BookingCardProps> = ({
                   variant="contained"
                   color="success"
                   startIcon={<VideoCallIcon />}
-                  onClick={() => onJoin!(booking.id)}
+                  onClick={() => booking.consultationId && onJoin?.(booking.consultationId)}
                   sx={{ borderRadius: 2 }}
                 >
                   {t('myBookings.joinSession')}

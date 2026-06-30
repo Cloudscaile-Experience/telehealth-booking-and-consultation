@@ -115,6 +115,7 @@ export interface Booking {
 
 export interface BookingDetail extends Booking {
   slot: AvailabilitySlot;
+  consultationId: string | null;
 }
 
 export interface CreateBookingPayload {

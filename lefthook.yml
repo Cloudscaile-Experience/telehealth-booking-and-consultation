@@ -13,7 +13,7 @@ pre-commit:
     - name: web — biome lint + format
       root: "web/"
       glob: "*.{ts,tsx,js,jsx,json}"
-      run: npx @biomejs/biome check --write {staged_files}
+      run: npx @biomejs/biome check --write --unsafe {staged_files}
       stage_fixed: true
 
     - name: web — typescript
@@ -37,7 +37,7 @@ pre-commit:
     - name: py — ruff (lint + fix)
       root: "py/"
       glob: "*.py"
-      run: uv run ruff check --fix {staged_files}
+      run: uv run ruff check --fix --unsafe-fixes {staged_files}
       stage_fixed: true
 
     - name: py — mypy (types)

@@ -51,6 +51,7 @@ export interface RawBooking {
 
 export interface RawBookingDetail extends RawBooking {
   slot: RawAvailabilitySlot;
+  consultation_id: string | null;
 }
 
 export interface RawConsultation {
@@ -120,7 +121,8 @@ export const transformBooking = (raw: RawBooking): Booking => ({
 
 export const transformBookingDetail = (raw: RawBookingDetail): BookingDetail => ({
   ...transformBooking(raw),
-  slot: transformSlot(raw.slot)
+  slot: transformSlot(raw.slot),
+  consultationId: raw.consultation_id ?? null
 });
 
 export const transformConsultation = (raw: RawConsultation): Consultation => ({

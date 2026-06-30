@@ -67,7 +67,8 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
 
   const canConfirm = booking.status === 'pending';
   const canCancel = booking.status === 'pending' || booking.status === 'confirmed';
-  const canJoin = booking.status === 'confirmed' && Boolean(onJoinSession);
+  const canJoin =
+    booking.status === 'confirmed' && Boolean(onJoinSession) && Boolean(booking.consultationId);
 
   const handleConfirm = async () => {
     await confirmBooking.mutateAsync(booking.id);
@@ -241,7 +242,7 @@ const BookingDetailView: React.FC<BookingDetailViewProps> = ({
                   variant="contained"
                   color="success"
                   startIcon={<VideoCallIcon />}
-                  onClick={() => onJoinSession!(booking.id)}
+                  onClick={() => booking.consultationId && onJoinSession?.(booking.consultationId)}
                   sx={{ borderRadius: 2 }}
                 >
                   {t('bookingDetail.joinSession')}

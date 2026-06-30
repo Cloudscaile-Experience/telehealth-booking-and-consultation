@@ -66,7 +66,11 @@ async def list_bookings(
 
 
 async def get_booking(session: AsyncSession, booking_id: uuid.UUID, patient_id: str) -> BookingDetailResponse:
-    result = await session.execute(select(Booking).options(selectinload(Booking.slot)).where(Booking.id == booking_id))
+    result = await session.execute(
+        select(Booking)
+        .options(selectinload(Booking.slot), selectinload(Booking.consultation))
+        .where(Booking.id == booking_id)
+    )
     booking = result.scalar_one_or_none()
 
     if not booking:
@@ -74,7 +78,8 @@ async def get_booking(session: AsyncSession, booking_id: uuid.UUID, patient_id: 
     if booking.patient_id != patient_id:
         raise BookingAccessDeniedError("Access denied to this booking")
 
-    return BookingDetailResponse.model_validate(booking)
+    detail = BookingDetailResponse.model_validate(booking)
+    return detail.model_copy(update={"consultation_id": booking.consultation.id if booking.consultation else None})
 
 
 async def create_booking(
