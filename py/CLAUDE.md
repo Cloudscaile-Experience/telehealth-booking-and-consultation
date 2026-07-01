@@ -28,8 +28,8 @@ Production-grade REST API built with **FastAPI**, **SQLAlchemy 2.0 async**, and 
 uv venv
 source .venv/bin/activate
 
-# 2. Install all dependencies (including dev)
-uv sync
+# 2. Install all dependencies and set up git hooks
+make install
 
 # 3. Copy and fill in environment variables
 cp .env.example .env
@@ -41,11 +41,20 @@ docker compose -f docker-compose.dev.yml up -d
 uv run alembic upgrade head
 
 # 6. Start the dev server (hot reload)
-uv run uvicorn telehealth.app.main:create_app --factory --reload
+make dev
 ```
 
-API docs: `http://localhost:8000/docs`
-Health: `http://localhost:8000/health`
+API docs: `http://localhost:8000/open/docs`
+Health: `http://localhost:8000/open/health`
+
+## Makefile Shortcuts
+
+| Command | What it does |
+| -------------- | --------------------------------------- |
+| `make install` | `uv sync --group dev` + `pre-commit install` |
+| `make dev` | Start uvicorn with hot reload on `:8000` |
+| `make lint` | Run ruff, black, mypy across `src/` and `tests/` |
+| `make test` | Run the full pytest suite |
 
 ## Project Structure
 
