@@ -1,4 +1,3 @@
-import type { Theme } from '@mui/material/styles';
 import {
   type AxiosInstance,
   type ExtAxiosConfig,
@@ -13,7 +12,8 @@ import {
   injectReducers,
   registerTranslation,
   toast
-} from 'cs-ext-utils';
+} from '@cloudscaile-eng/web-ext-utils';
+import type { Theme } from '@mui/material/styles';
 import type { Store } from 'redux';
 import { APP_CONFIG } from './appConfig';
 

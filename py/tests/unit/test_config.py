@@ -6,6 +6,27 @@ from telehealth.utils.config import Settings
 
 
 @pytest.mark.unit
+class TestSettingsServer:
+    def test_default_port(self) -> None:
+        s = Settings()
+        assert s.PORT == 8000
+
+    def test_port_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("PORT", "9090")
+        s = Settings()
+        assert s.PORT == 9090
+
+    def test_default_host(self) -> None:
+        s = Settings()
+        assert s.HOST == "0.0.0.0"
+
+    def test_host_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("HOST", "127.0.0.1")
+        s = Settings()
+        assert s.HOST == "127.0.0.1"
+
+
+@pytest.mark.unit
 class TestSettingsDatabaseUrl:
     def test_default_pg_db(self) -> None:
         s = Settings()

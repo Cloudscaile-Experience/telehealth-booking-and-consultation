@@ -14,6 +14,7 @@
   "description": "",
   "dependencies": {
     "@carbon/icons-react": "^11.71.0",
+    "@cloudscaile-eng/web-ext-utils": "^0.0.3",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -27,7 +28,6 @@
     "@reduxjs/toolkit": "^2.6.1",
     "@tailwindcss/postcss": "^4.0.14",
     "@tanstack/react-query": "^5.90.11",
-    "cs-ext-utils": "github:Cloudscaile-Engineering/web-ext-utils#dist",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.3",
     "formik": "^2.4.6",
