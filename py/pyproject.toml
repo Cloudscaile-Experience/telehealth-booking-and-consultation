@@ -6,7 +6,6 @@ build-backend = "hatchling.build"
 name = "telehealth"
 version = "0.1.0"
 description = "Telehealth Booking & Consultation Backend — FastAPI + SQLAlchemy + asyncpg"
-readme = "README.md"
 requires-python = "==3.12.*"
 license = { text = "MIT" }
 authors = [{ name = "Denzil Rodrigues", email = "devops@cloudscaile.com" }]

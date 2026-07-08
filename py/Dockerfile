@@ -21,6 +21,7 @@ COPY --from=deps /app/.venv /app/.venv
 COPY src/ /app/src/
 COPY alembic/ /app/alembic/
 COPY alembic.ini /app/alembic.ini
+COPY pyproject.toml /app/pyproject.toml
 
 # Install the package itself (no deps — already installed)
 RUN uv pip install --no-deps -e .
