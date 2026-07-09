@@ -1,7 +1,7 @@
 {
   "version": "0.0.1",
   "tenant": "cloudscaile",
-  "extensionName": "telehealthBookingAndConsultation",
+  "extensionName": "telehealthBooking",
   "description": "A system for the Telehealth Booking & Consultation extension — virtual consultation booking, video sessions, and post-visit summaries.",
   "displayName": "Telehealth Booking & Consultation",
   "web": {
