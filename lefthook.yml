@@ -1,19 +1,61 @@
 # Lefthook — git hook configuration for the telehealth monorepo
 # Docs: https://lefthook.dev/configuration/
 #
-# Web hooks: run automatically via npm install inside web/.
-# Python hooks: managed via pre-commit inside py/.
-#   Install: cd py && uv run pre-commit install
-#   Run manually: cd py && uv run pre-commit run --all-files
+# Sole owner of .git/hooks/pre-commit and .git/hooks/pre-push — installed
+# automatically via `npm install` inside web/ (see the `prepare` script in
+# web/package.json).
+#   Reinstall manually: npx lefthook install    (from web/, or web/node_modules/.bin/lefthook)
+#   Run on demand:      npx lefthook run pre-commit
 
 pre-commit:
   parallel: true
   jobs:
+    # ── Repo-wide hygiene (native re-implementation of pre-commit-hooks) ───────
+    - name: check large files
+      glob: "*"
+      run: uv run --project py python3 py/scripts/precommit_checks.py large-files {staged_files}
+
+    - name: check merge conflict markers
+      glob: "*"
+      run: uv run --project py python3 py/scripts/precommit_checks.py merge-conflicts {staged_files}
+
+    - name: detect private keys
+      glob: "*"
+      run: uv run --project py python3 py/scripts/precommit_checks.py private-keys {staged_files}
+
+    - name: check case conflicts
+      run: uv run --project py python3 py/scripts/precommit_checks.py case-conflicts
+
+    - name: check yaml syntax
+      glob: "*.{yml,yaml}"
+      run: uv run --project py python3 py/scripts/precommit_checks.py yaml {staged_files}
+
+    - name: check toml syntax
+      glob: "*.toml"
+      run: uv run --project py python3 py/scripts/precommit_checks.py toml {staged_files}
+
+    - name: check json syntax
+      glob: "*.json"
+      run: uv run --project py python3 py/scripts/precommit_checks.py json {staged_files}
+
+    - name: fix trailing whitespace
+      glob: "*"
+      run: uv run --project py python3 py/scripts/precommit_checks.py fix-whitespace {staged_files}
+      stage_fixed: true
+
+    - name: fix end of files
+      glob: "*"
+      run: uv run --project py python3 py/scripts/precommit_checks.py fix-eof {staged_files}
+      stage_fixed: true
+
     # ── Web (React micro-frontend) ─────────────────────────────────────────────
     - name: web — biome lint + format
       root: "web/"
       glob: "*.{ts,tsx,js,jsx,json}"
-      run: npx @biomejs/biome check --write --unsafe {staged_files}
+      # --unsafe deliberately omitted: it applies fixes that can change
+      # behavior (e.g. noConsole deletes console.* calls outright), which
+      # is unsafe to auto-stage in a hook. Matches `npm run check:fix`.
+      run: npx @biomejs/biome check --write {staged_files}
       stage_fixed: true
 
     - name: web — typescript
@@ -28,17 +70,16 @@ pre-commit:
       run: uv run black {staged_files}
       stage_fixed: true
 
-    - name: py — isort (imports)
-      root: "py/"
-      glob: "*.py"
-      run: uv run isort {staged_files}
-      stage_fixed: true
-
     - name: py — ruff (lint + fix)
       root: "py/"
       glob: "*.py"
       run: uv run ruff check --fix --unsafe-fixes {staged_files}
       stage_fixed: true
+
+    - name: py — debug statements
+      root: "py/"
+      glob: "*.py"
+      run: uv run python3 scripts/precommit_checks.py debug-statements {staged_files}
 
     - name: py — mypy (types)
       root: "py/"

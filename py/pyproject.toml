@@ -31,8 +31,6 @@ dependencies = [
 [dependency-groups]
 dev = [
     "black>=25.1.0",
-    "isort==5.13.2",
-    "pre-commit>=4.0.0",
     "pytest>=8.3.0",
     "pytest-asyncio>=0.24.0",
     "pytest-cov>=6.0.0",
@@ -59,14 +57,10 @@ extend-exclude = '''
 )/
 '''
 
-# ── isort ─────────────────────────────────────────────────────────────────────
-[tool.isort]
-profile = "black"
-line_length = 120
-lines_between_sections = 1
-known_first_party = ["telehealth"]
-
 # ── Ruff ──────────────────────────────────────────────────────────────────────
+# Ruff's "I" ruleset (below) owns import sorting — there is no standalone
+# isort. Running both caused the two tools to disagree on how to merge
+# same-module imports and fight each other on every commit.
 [tool.ruff]
 line-length = 120
 target-version = "py312"

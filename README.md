@@ -71,19 +71,17 @@ npm start
 
 ## Git Hooks (Lefthook)
 
-Hooks run automatically on commit and push. Install with:
+Lefthook is the sole owner of `.git/hooks/pre-commit` and `.git/hooks/pre-push`, installed automatically via `npm install` inside `web/` (its `prepare` script runs `lefthook install`).
+
+Reinstall manually:
 
 ```sh
-# Web/JS hooks (via npm)
-cd js && npx lefthook install
-
-# Python hooks (via pre-commit)
-cd py && uv run pre-commit install
+npx lefthook install   # from web/, or: web/node_modules/.bin/lefthook install
 ```
 
 | Hook         | Jobs                                                                 |
 | ------------ | -------------------------------------------------------------------- |
-| `pre-commit` | web: Biome lint/format + TypeScript; py: black + isort + ruff + mypy |
+| `pre-commit` | repo-wide hygiene (secrets, large files, merge conflicts, YAML/TOML/JSON, whitespace); web: Biome + TypeScript; py: black + ruff (lint + imports) + mypy |
 | `pre-push`   | js: Vitest; py: pytest unit tests                                    |
 
 ---

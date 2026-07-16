@@ -22,10 +22,14 @@ COPY src/ /app/src/
 COPY alembic/ /app/alembic/
 COPY alembic.ini /app/alembic.ini
 COPY pyproject.toml /app/pyproject.toml
+COPY seed/ /app/seed/
+COPY scripts/ /app/scripts/
+COPY entrypoint.sh /app/entrypoint.sh
 
 # Install the package itself (no deps — already installed)
-RUN uv pip install --no-deps -e .
+RUN uv pip install --no-deps -e . \
+    && chmod +x /app/entrypoint.sh
 
 EXPOSE 8000
 
-CMD ["uvicorn", "telehealth.app.main:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["/app/entrypoint.sh"]

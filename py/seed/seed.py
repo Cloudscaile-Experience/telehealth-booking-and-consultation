@@ -12,6 +12,7 @@ import asyncio
 import sys
 import uuid
 from datetime import UTC, datetime, timedelta
+from typing import cast
 
 from sqlalchemy import select, text
 
@@ -334,7 +335,7 @@ async def seed(reset: bool = False) -> None:
         print("Seeding providers …")
         provider_records: list[Provider] = []
         for p in PROVIDERS:
-            specialty = ProviderSpecialty(p["specialty"])
+            specialty = cast(ProviderSpecialty, p["specialty"])
             record = Provider(
                 id=uuid.uuid4(),
                 name=p["name"],

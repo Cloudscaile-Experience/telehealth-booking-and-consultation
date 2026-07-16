@@ -1,7 +1,7 @@
-from enum import Enum
+from enum import StrEnum
 
 
-class ProviderSpecialty(str, Enum):
+class ProviderSpecialty(StrEnum):
     GENERAL_PRACTITIONER = "general_practitioner"
     CARDIOLOGIST = "cardiologist"
     DERMATOLOGIST = "dermatologist"
@@ -16,7 +16,7 @@ class ProviderSpecialty(str, Enum):
     THERAPIST = "therapist"
 
 
-class BookingStatus(str, Enum):
+class BookingStatus(StrEnum):
     PENDING = "pending"
     CONFIRMED = "confirmed"
     CANCELLED = "cancelled"
@@ -24,7 +24,7 @@ class BookingStatus(str, Enum):
     NO_SHOW = "no_show"
 
 
-class ConsultationStatus(str, Enum):
+class ConsultationStatus(StrEnum):
     SCHEDULED = "scheduled"
     IN_PROGRESS = "in_progress"
     COMPLETED = "completed"

@@ -1,6 +1,6 @@
 ---
 trigger: always_on
-description: Trigger these rules when modifying the Telehealth backend (FastAPI + SQLAlchemy + asyncpg). Enforces async-first design, strict typing (mypy), layered architecture, pre-commit workflows, and Pydantic schema standards.
+description: Trigger these rules when modifying the Telehealth backend (FastAPI + SQLAlchemy + asyncpg). Enforces async-first design, strict typing (mypy), layered architecture, lefthook git-hook workflows, and Pydantic schema standards.
 ---
 
 # Telehealth Booking & Consultation — Python Backend
@@ -28,7 +28,7 @@ Production-grade REST API built with **FastAPI**, **SQLAlchemy 2.0 async**, and 
 uv venv
 source .venv/bin/activate
 
-# 2. Install all dependencies and set up git hooks
+# 2. Install all dependencies
 make install
 
 # 3. Copy and fill in environment variables
@@ -51,7 +51,7 @@ Health: `http://localhost:8000/open/health`
 
 | Command | What it does |
 | -------------- | --------------------------------------- |
-| `make install` | `uv sync --group dev` + `pre-commit install` |
+| `make install` | `uv sync --group dev` (git hooks are installed by lefthook via `npm install` in `web/`) |
 | `make dev` | Start uvicorn with hot reload on `:8000` |
 | `make lint` | Run ruff, black, mypy across `src/` and `tests/` |
 | `make test` | Run the full pytest suite |
@@ -108,15 +108,20 @@ py/
 
 ## Running Quality Checks
 
-```bash
-# All hooks (black, isort, ruff, mypy, pytest-unit)
-uv run pre-commit run --all-files
+Git hooks are managed by **lefthook** (repo root `lefthook.yml`), not pre-commit — see [../lefthook.yml](../lefthook.yml). It runs automatically on `git commit` against staged files only.
 
-# Specific hooks
-uv run pre-commit run ruff --all-files
-uv run pre-commit run black --all-files
-uv run pre-commit run isort --all-files
-uv run pre-commit run mypy --all-files
+```bash
+# Run the full pre-commit job group manually, from the repo root
+npx lefthook run pre-commit                 # staged files only
+npx lefthook run pre-commit --all-files     # entire repo, not just staged
+
+# Run a single job by name
+npx lefthook run pre-commit --job "py — mypy (types)"
+
+# Equivalent direct commands (from py/)
+uv run ruff check --fix src/ tests/
+uv run black src/ tests/
+uv run mypy src/
 
 # Tests
 uv run pytest tests/unit/ -v           # fast
@@ -208,28 +213,19 @@ All Pydantic schemas go in `src/telehealth/schemas/`. Never define them inline i
 
 ## Troubleshooting
 
-### Pre-commit hook failures
+### Lefthook job failures
 
-Formatting hooks (black, isort, ruff) auto-fix files. Stage and re-run:
-
-```bash
-git add -u && uv run pre-commit run --all-files
-```
+Formatting jobs (black, ruff, biome, whitespace/EOF fixers) have `stage_fixed: true` — lefthook auto-fixes the files and re-stages them. Just re-run `git commit`. Jobs without `stage_fixed` (mypy, typescript, debug-statements, secret/large-file/merge-conflict checks) block the commit until you fix the reported issue yourself.
 
 ### Mypy Untyped Decorators
 
 FastAPI route decorators trigger `Untyped decorator` errors. Append `# type: ignore[misc]` to the decorator line.
 
-### Running specific hooks
+### Running a single lefthook job
 
 ```bash
-# ✅ Correct
-uv run pre-commit run mypy --all-files
-uv run pre-commit run ruff --all-files
-
-# ❌ Wrong
-uv run mypy src/
-uv run pre-commit run --all-files --mypy
+npx lefthook run pre-commit --job "py — mypy (types)"
+npx lefthook run pre-commit --job "py — ruff (lint + fix)"
 ```
 
 ### Alembic can't find models

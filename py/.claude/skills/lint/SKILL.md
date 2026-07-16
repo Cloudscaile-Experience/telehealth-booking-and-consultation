@@ -1,31 +1,28 @@
 ---
 name: lint
-description: Run all code quality tools (ruff, mypy, black, isort) via pre-commit.
+description: Run all code quality tools (ruff, mypy, black) via lefthook.
 ---
 
 # Instructions
 
-Run all pre-commit hooks across the entire project:
+Run all lefthook `pre-commit` jobs across the entire project (from the repo root):
 
 ```bash
-uv run pre-commit run --all-files
+npx lefthook run pre-commit --all-files
 ```
 
-### Run specific hooks
+### Run specific jobs
 
-| Hook | Command |
+| Job | Command |
 |------|---------|
-| Ruff (lint + fix) | `uv run pre-commit run ruff --all-files` |
-| Black (format) | `uv run pre-commit run black --all-files` |
-| isort (imports) | `uv run pre-commit run isort --all-files` |
-| Mypy (types) | `uv run pre-commit run mypy --all-files` |
+| Ruff (lint + fix + imports) | `npx lefthook run pre-commit --job "py — ruff (lint + fix)" --all-files` |
+| Black (format) | `npx lefthook run pre-commit --job "py — black (format)" --all-files` |
+| Mypy (types) | `npx lefthook run pre-commit --job "py — mypy (types)" --all-files` |
+
+There is no standalone isort — ruff's `I` ruleset owns import sorting. Do not add isort back; it disagrees with ruff on how to merge same-module imports and the two will fight each other on every commit.
 
 ### Troubleshooting
 
-If a formatting hook fails it auto-fixes the files. Stage the changes and re-run:
+Jobs with `stage_fixed: true` (black, ruff, whitespace/EOF fixers) auto-fix files and re-stage them. Just re-run the command.
 
-```bash
-git add -u && uv run pre-commit run --all-files
-```
-
-Do NOT use flags like `--ruff` or `--mypy`. Always use `pre-commit run <hook-id>`.
+Do NOT run `uv run pre-commit ...` — pre-commit is no longer used in this repo. Lefthook (`lefthook.yml` at the repo root) is the only git-hook runner.
