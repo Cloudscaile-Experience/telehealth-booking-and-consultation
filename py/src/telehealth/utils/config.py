@@ -42,8 +42,8 @@ class Settings(BaseSettings):
     GATEWAY_BASE_URL: str | None = Field(default=None)
 
     # ── Tenant ─────────────────────────────────────────────────────────────────
-    TENANT_NAME: str = Field(default="telehealth")
-    EXTENSION_NAME: str = Field(default="telehealth-booking-and-consultation")
+    TENANT_NAME: str = Field(default="cloudscaile")
+    EXTENSION_NAME: str = Field(default="telehealthBooking")
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
