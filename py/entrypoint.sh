@@ -10,6 +10,9 @@ python scripts/wait_for_db.py
 echo "Running database migrations..."
 alembic upgrade head
 
+echo "Verifying schema..."
+python scripts/verify_schema.py
+
 echo "Seeding database (idempotent — skips if data already exists)..."
 python seed/seed.py
 
