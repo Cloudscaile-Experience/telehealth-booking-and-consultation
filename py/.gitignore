@@ -62,9 +62,6 @@ dmypy.json
 *.swo
 .DS_Store
 
-# Alembic
-alembic/versions/*.py
-!alembic/versions/.gitkeep
 
 # Logs
 *.log
