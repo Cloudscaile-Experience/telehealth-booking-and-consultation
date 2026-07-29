@@ -23,13 +23,25 @@ import asyncio
 import subprocess
 import sys
 
-from sqlalchemy import text
+from sqlalchemy import Enum, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
+# Import all models so their tables (and enum columns) are registered on Base.metadata.
+import telehealth.db.models  # noqa: F401
+from telehealth.db.base import Base
 from telehealth.utils.config import get_settings
 
 REQUIRED_TABLES = ("providers", "availability_slots", "bookings", "consultations")
+
+
+def _enum_type_names() -> set[str]:
+    names = set()
+    for table in Base.metadata.tables.values():
+        for column in table.columns:
+            if isinstance(column.type, Enum) and column.type.name:
+                names.add(column.type.name)
+    return names
 
 
 async def _find_existing_tables(engine: AsyncEngine | Engine) -> set[str]:
@@ -47,6 +59,11 @@ async def _find_existing_tables(engine: AsyncEngine | Engine) -> set[str]:
 async def _reset_stale_alembic_version(engine: AsyncEngine) -> None:
     async with engine.begin() as conn:
         await conn.execute(text("DROP TABLE IF EXISTS alembic_version"))
+        # Postgres ENUM types created by a prior migration attempt survive
+        # `DROP TABLE ... CASCADE` (they're not owned by the table), so a
+        # bare re-run of the migration would fail with "type already exists".
+        for enum_name in _enum_type_names():
+            await conn.execute(text(f'DROP TYPE IF EXISTS "{enum_name}"'))
 
 
 async def verify_schema() -> None:
