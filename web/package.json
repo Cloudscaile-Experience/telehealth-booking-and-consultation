@@ -14,7 +14,7 @@
   "description": "",
   "dependencies": {
     "@carbon/icons-react": "^11.71.0",
-    "@cloudscaile-eng/web-ext-utils": "^0.0.3",
+    "@cloudscaile-eng/web-ext-utils": "^0.0.8",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
