@@ -23,6 +23,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
+    // biome-ignore lint/suspicious/noConsole: render errors must stay visible in the browser console
     console.error('[ErrorBoundary]', error, info.componentStack);
   }
 
